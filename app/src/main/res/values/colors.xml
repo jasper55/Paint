@@ -8,5 +8,5 @@
     <color name="background">#DFDFDF</color>
     <color name="paintColor">#222222</color>
 
-
+    <color name="transparent">#8d000000</color>
 </resources>

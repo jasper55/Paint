@@ -1,10 +1,11 @@
-package wagner.jasper.paint.UI
+package wagner.jasper.paint.ui
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -12,7 +13,11 @@ import androidx.core.content.res.ResourcesCompat
 import wagner.jasper.paint.R
 import kotlin.math.abs
 
-class CustomCanvasView(context: Context) : View(context) {
+class CustomCanvasView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0)
+    : View(context, attrs, defStyle) {
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
@@ -31,8 +36,9 @@ class CustomCanvasView(context: Context) : View(context) {
         strokeWidth = STROKE_WIDTH
     }
 
-    // the pa the user is drawing
+    // the path the user is drawing
     private var path = Path()
+    var pathList = ArrayList<Path>()
 
     private var motionTouchEventX = 0F
     private var motionTouchEventY = 0F
@@ -72,7 +78,6 @@ class CustomCanvasView(context: Context) : View(context) {
             MotionEvent.ACTION_MOVE -> touchMove()
             MotionEvent.ACTION_UP -> touchUp()
         }
-
         return true
     }
 
@@ -99,12 +104,33 @@ class CustomCanvasView(context: Context) : View(context) {
             currentY = motionTouchEventY
             extraCanvas.drawPath(path, paintStyle)
         }
-        // froces to redraw the on the screen with the updated path
+        // forces to redraw the on the screen with the updated path
         invalidate()
     }
 
     private fun touchUp() {
+        savePathToList(path)
         path.reset()
+        invalidate()
+    }
+
+    private fun savePathToList(path: Path) {
+        pathList.add(path)
+        invalidate()
+    }
+
+    private fun deleteLastPath() {
+        val index = pathList.size
+        pathList.removeAt(index)
+        invalidate()
+    }
+
+    private fun deleteSelectedPath(path: Path) {
+        pathList.remove(path)
+    }
+
+    private fun cleanPath() {
+        cleanPath()
     }
 
 

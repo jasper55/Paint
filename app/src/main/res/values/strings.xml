@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Paint</string>
     <string name="paintCanvasDescription">\"paint canvas\"</string>
+    <string name="label_erase">erase</string>
+    <string name="label_undo">undo</string>
+    <string name="label_clear">clear</string>
 </resources>
