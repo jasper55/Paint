@@ -6,17 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/fab_menu" />
+
 
     <wagner.jasper.paint.ui.CustomCanvasView
         android:id="@+id/custom_canvas_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/include"
-        app:layout_constraintEnd_toStartOf="@+id/include"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/fab_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

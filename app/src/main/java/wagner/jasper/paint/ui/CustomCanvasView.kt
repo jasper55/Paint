@@ -15,9 +15,8 @@ import kotlin.math.abs
 
 class CustomCanvasView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyle: Int = 0)
-    : View(context, attrs, defStyle) {
+    attrs: AttributeSet
+) : View(context, attrs) {
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
