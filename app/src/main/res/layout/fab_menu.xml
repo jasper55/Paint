@@ -126,7 +126,7 @@
             app:backgroundTint="@color/colorFabMenu"
             app:borderWidth="0dp"
             app:fabSize="normal"
-            app:srcCompat="@drawable/ic_menu_black" />
+            app:srcCompat="@drawable/ic_menu2_black" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import wagner.jasper.paint.ui.CustomCanvasView
 import wagner.jasper.paint.ui.FabMenu
+import wagner.jasper.paint.ui.SharedViewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+            val sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
 //        val paintCanvas = CustomCanvasView(this)
 
         // set canvas to full screen

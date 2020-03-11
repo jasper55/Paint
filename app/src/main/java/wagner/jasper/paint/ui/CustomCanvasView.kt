@@ -10,13 +10,28 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Observer
 import wagner.jasper.paint.R
+import wagner.jasper.paint.util.ViewModelAccessor
+import wagner.jasper.paint.util.ViewModelInjector
 import kotlin.math.abs
 
 class CustomCanvasView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet
-) : View(context, attrs) {
+) : View(context, attrs),
+    ViewModelAccessor by ViewModelInjector(context) {
+
+
+    init {
+        subscribe()
+    }
+
+    private fun subscribe() {
+        sharedViewModel.property.observe(activity, Observer {
+        })
+    }
+
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
