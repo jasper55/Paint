@@ -9,7 +9,7 @@
         android:id="@+id/fabOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent"
+        android:background="@color/blackTransparent80"
         android:visibility="gone" />
 
     <LinearLayout
@@ -38,6 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            app:backgroundTint="@color/colorFabThree"
+            app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_clear_black" />
     </LinearLayout>
@@ -65,6 +67,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            app:backgroundTint="@color/colorFabTwo"
+            app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_undo_black" />
     </LinearLayout>
@@ -93,6 +97,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            app:backgroundTint="@color/colorFabOne"
+            app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_erase_black" />
     </LinearLayout>
@@ -117,6 +123,8 @@
             android:layout_gravity="bottom|end"
             android:gravity="center_vertical"
             app:elevation="100dp"
+            app:backgroundTint="@color/colorFabMenu"
+            app:borderWidth="0dp"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_menu_black" />
     </LinearLayout>

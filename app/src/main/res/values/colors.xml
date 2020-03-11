@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#DFDFDF</color>
+    <color name="colorPrimaryDark">#999999</color>
+
+    <color name="colorFabMenu">#7498FF</color>
+    <color name="colorFabOne">#80D8FF</color>
+    <color name="colorFabTwo">#B9F6CA</color>
+    <color name="colorFabThree">#FFFF8D</color>
     <color name="colorAccent">#D81B60</color>
 
 
     <color name="background">#DFDFDF</color>
     <color name="paintColor">#222222</color>
 
-    <color name="transparent">#8d000000</color>
+    <color name="blackTransparent80">#8d000000</color>
 </resources>
