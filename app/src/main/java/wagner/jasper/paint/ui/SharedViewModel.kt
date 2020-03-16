@@ -52,6 +52,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _path.value!!.reset()
     }
 
+    // after the user has stopped moving and touches the screen again
     fun touchStart() {
         _path.value!!.reset()
         _path.value!!.moveTo(motionTouchEventX, motionTouchEventY)

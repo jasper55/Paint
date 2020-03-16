@@ -1,6 +1,8 @@
 package wagner.jasper.paint.util
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
 import wagner.jasper.paint.MainActivity
 import wagner.jasper.paint.ui.SharedViewModel

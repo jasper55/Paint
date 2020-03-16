@@ -3,12 +3,14 @@ package wagner.jasper.paint
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import wagner.jasper.paint.ui.CustomCanvasView
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private var fab_erase: FloatingActionButton? = null
     private var fab_delete: FloatingActionButton? = null
     private var fab_menu: FloatingActionButton? = null
+    private lateinit var canvas: CustomCanvasView
+    private lateinit var sharedViewModel: SharedViewModel
 
     var fab_container_clear: LinearLayout? = null
     var fab_container_erase: LinearLayout? = null
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-            val sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
 //        val paintCanvas = CustomCanvasView(this)
 
         // set canvas to full screen
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 //        fabMenu.instantiateFABMenu(this)
 //        window.addContentView(fabMenu,)
         instantiateFABMenu()
+        instantiateCanvas()
     }
 
     override fun onBackPressed() {
@@ -50,6 +55,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun instantiateCanvas(){
+        canvas = findViewById(R.id.custom_canvas_view)
+        subscribe()
+    }
+
+    private fun subscribe() {
+//        Log.i("CCV", "${sharedViewModel.path.value}")
+//        Log.i("CCV", activity.toString())
+        sharedViewModel.path.observe(this, Observer {
+            it?.let {
+                canvas.extraCanvas.drawPath(it, canvas.paintStyle)
+                canvas.invalidate()
+            }
+        })
+    }
 
     private fun instantiateFABMenu() {
         fab_container_clear = findViewById(R.id.fab_container_clear)
@@ -74,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase!!.setOnClickListener {
-            closeFABMenu()
+            //closeFABMenu()
         }
         fab_delete = findViewById(R.id.fab_undo)
         fab_delete!!.setOnClickListener {
