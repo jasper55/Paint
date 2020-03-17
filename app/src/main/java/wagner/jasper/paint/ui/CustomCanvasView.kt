@@ -9,12 +9,10 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.*
 import wagner.jasper.paint.R
 import wagner.jasper.paint.util.ViewModelAccessor
 import wagner.jasper.paint.util.ViewModelInjector
 import android.graphics.*
-
 
 
 class CustomCanvasView @JvmOverloads constructor(
@@ -49,7 +47,13 @@ class CustomCanvasView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+//        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+        // Draw the drawing so far
+        canvas.drawPath(sharedViewModel.path.value!!, paintStyle)
+// Draw any current squiggle
+        sharedViewModel.currentPath.value?.let {
+            canvas.drawPath(it, paintStyle)
+        }
     }
 
     private fun initCanvas() {
@@ -63,7 +67,7 @@ class CustomCanvasView @JvmOverloads constructor(
     }
 
     fun drawPath(path: Path) {
-        Log.i("SharedViewModel","drawPath()")
+        Log.i("SharedViewModel", "drawPath()")
         extraCanvas.drawPath(path, paintStyle)
         invalidate()
     }
@@ -98,14 +102,9 @@ class CustomCanvasView @JvmOverloads constructor(
     }
 
 
-
-
-
     private fun touchMove() {
         if (sharedViewModel.isTouchEventWithinTolerance(touchTolerance)) {
             sharedViewModel.touchMove()
-            // TODO replace it with observe
-            extraCanvas.drawPath(sharedViewModel.path.value!!, paintStyle)
         }
         // forces to redraw the on the screen with the updated path
         invalidate()
@@ -115,9 +114,6 @@ class CustomCanvasView @JvmOverloads constructor(
         val rgb = Color.rgb(r, g, b)
         paintStyle.color = rgb
     }
-
-
-
 
 
     companion object {
