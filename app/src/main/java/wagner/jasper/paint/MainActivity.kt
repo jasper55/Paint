@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -36,33 +35,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
         canvas = CustomCanvasView(this, null)
         setContentView(R.layout.activity_main)
         instantiateFABMenu()
-
-        // set canvas to full screen
-//        paintCanvas.systemUiVisibility = SYSTEM_UI_FLAG_FULLSCREEN
-//        paintCanvas.contentDescription = getString(R.string.paintCanvasDescription)
-//        setContentView(paintCanvas)
-//        fabMenu.instantiateFABMenu(this)
-//        window.addContentView(fabMenu,)
-//        instantiateCanvas()
     }
 
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-//        val viewGroup = findViewById<ViewGroup>(R.id.main)
-//        canvas = CustomCanvasView(this,attrs)
-//        viewGroup.addView(canvas)
-//
-
-////        setContentView(viewGroup)
-//        return viewGroup
-
         observePathChanges()
-
         return super.onCreateView(name, context, attrs)
     }
 
@@ -78,13 +59,6 @@ class MainActivity : AppCompatActivity() {
             canvas.drawPath(it)
         })
     }
-
-
-    private fun instantiateCanvas() {
-//        canvas = findViewById(R.id.custom_canvas_view)
-//        subscribe()
-    }
-
 
     private fun instantiateFABMenu() {
         fab_container_clear = findViewById(R.id.fab_container_clear)
