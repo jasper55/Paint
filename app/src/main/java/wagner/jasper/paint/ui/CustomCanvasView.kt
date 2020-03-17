@@ -3,16 +3,18 @@ package wagner.jasper.paint.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.*
 import wagner.jasper.paint.R
 import wagner.jasper.paint.util.ViewModelAccessor
 import wagner.jasper.paint.util.ViewModelInjector
 import android.graphics.*
-import android.util.Log
+
 
 
 class CustomCanvasView @JvmOverloads constructor(
@@ -21,7 +23,7 @@ class CustomCanvasView @JvmOverloads constructor(
 ) : View(context, attrs),
     ViewModelAccessor by ViewModelInjector(context) {
 
-    private lateinit var extraCanvas: Canvas
+    lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
     private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.background, null)
@@ -80,6 +82,7 @@ class CustomCanvasView @JvmOverloads constructor(
         }
     }
 
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         sharedViewModel.updateXY(event.x, event.y)
 
@@ -95,11 +98,13 @@ class CustomCanvasView @JvmOverloads constructor(
     }
 
 
+
+
+
     private fun touchMove() {
         if (sharedViewModel.isTouchEventWithinTolerance(touchTolerance)) {
             sharedViewModel.touchMove()
             // TODO replace it with observe
-//            drawPath(sharedViewModel.path.value!!)
             extraCanvas.drawPath(sharedViewModel.path.value!!, paintStyle)
         }
         // forces to redraw the on the screen with the updated path
@@ -110,6 +115,8 @@ class CustomCanvasView @JvmOverloads constructor(
         val rgb = Color.rgb(r, g, b)
         paintStyle.color = rgb
     }
+
+
 
 
 

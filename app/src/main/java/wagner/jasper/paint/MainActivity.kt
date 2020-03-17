@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     var fab_container_erase: LinearLayout? = null
     var fab_container_delete: LinearLayout? = null
     var fabOverlay: View? = null
-    private lateinit var customFABView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             canvas.drawPath(it)
         })
     }
+
 
     private fun instantiateFABMenu() {
         fab_container_clear = findViewById(R.id.fab_container_clear)
@@ -98,13 +98,15 @@ class MainActivity : AppCompatActivity() {
         fab_container_delete!!.visibility = CoordinatorLayout.VISIBLE
         fab_container_erase!!.visibility = CoordinatorLayout.VISIBLE
         fabOverlay!!.visibility = CoordinatorLayout.VISIBLE
-        fab_menu!!.animate().rotationBy(270F).setListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animator: Animator) {}
-            override fun onAnimationEnd(animator: Animator) {}
-            override fun onAnimationCancel(animator: Animator) {}
-            override fun onAnimationRepeat(animator: Animator) {}
-        })
-        fab_container_clear!!.animate().translationY(-resources.getDimension(R.dimen.standard_175))
+        fab_menu!!.animate().rotationBy(270F)
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animator: Animator) {}
+                override fun onAnimationEnd(animator: Animator) {}
+                override fun onAnimationCancel(animator: Animator) {}
+                override fun onAnimationRepeat(animator: Animator) {}
+            })
+        fab_container_clear!!.animate()
+            .translationY(-resources.getDimension(R.dimen.standard_175))
         fab_container_delete!!.animate()
             .translationY(-resources.getDimension(R.dimen.standard_120))
         fab_container_erase!!.animate()
@@ -119,19 +121,20 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear!!.animate().translationY(0F)
         fab_container_delete!!.animate().translationY(0F)
         fab_container_erase!!.animate().translationY(0F)
-        fab_menu!!.animate().rotationBy(-270F).setListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animator: Animator) {}
-            override fun onAnimationEnd(animator: Animator) {
-                if (!isFABOpen) {
-                    fab_container_clear!!.visibility = CoordinatorLayout.GONE
-                    fab_container_delete!!.visibility = CoordinatorLayout.GONE
-                    fab_container_erase!!.visibility = CoordinatorLayout.GONE
+        fab_menu!!.animate().rotationBy(-270F)
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animator: Animator) {}
+                override fun onAnimationEnd(animator: Animator) {
+                    if (!isFABOpen) {
+                        fab_container_clear!!.visibility = CoordinatorLayout.GONE
+                        fab_container_delete!!.visibility = CoordinatorLayout.GONE
+                        fab_container_erase!!.visibility = CoordinatorLayout.GONE
+                    }
                 }
-            }
 
-            override fun onAnimationCancel(animator: Animator) {}
-            override fun onAnimationRepeat(animator: Animator) {}
-        })
+                override fun onAnimationCancel(animator: Animator) {}
+                override fun onAnimationRepeat(animator: Animator) {}
+            })
     }
 
 }
