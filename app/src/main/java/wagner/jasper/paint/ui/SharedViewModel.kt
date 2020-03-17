@@ -2,6 +2,7 @@ package wagner.jasper.paint.ui
 
 import android.app.Application
 import android.graphics.Path
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -44,12 +45,15 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         )
         currentX = motionTouchEventX
         currentY = motionTouchEventY
+        Log.i("SharedViewModel","touchMove()")
     }
 
     fun touchUp() {
         _pathList.value!!.add(path.value!!)
         _currentPath.value = _path.value
         _path.value!!.reset()
+        Log.i("SharedViewModel","touchUp()")
+
     }
 
     fun touchStart() {
@@ -57,6 +61,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _path.value!!.moveTo(motionTouchEventX, motionTouchEventY)
         currentX = motionTouchEventX
         currentY = motionTouchEventY
+        Log.i("SharedViewModel","touchStart()")
+
     }
 
     fun updateXY(x: Float, y: Float) {
