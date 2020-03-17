@@ -71,14 +71,22 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
 
     fun undoDrawLastPath() {
+        Log.i("SharedViewModel", "${_pathList.value!!.size} size before")
+
         _pathList.value!!.remove(_currentPath.value)
+        Log.i("SharedViewModel", "${_pathList.value!!.size} size after")
+
+        _path.value = Path()
+        _currentPath.value = Path()
         // set new currentPath to be able do further undo
         pathList.value?.let { pathList ->
             {
+
                 if (pathList.size != 0) {
                     _currentPath.value = pathList.get(pathList.size)
+
                     pathList.forEach {
-                    _path.value!!.addPath(it)
+                        _path.value!!.addPath(it)
                     }
                 }
             }
