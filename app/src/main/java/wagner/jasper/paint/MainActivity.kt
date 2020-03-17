@@ -20,17 +20,17 @@ import wagner.jasper.paint.ui.SharedViewModel
 class MainActivity : AppCompatActivity() {
 
     private var isFABOpen = false
-    private var fab_clear: FloatingActionButton? = null
-    private var fab_erase: FloatingActionButton? = null
-    private var fab_delete: FloatingActionButton? = null
-    private var fab_menu: FloatingActionButton? = null
+    private lateinit var fab_clear: FloatingActionButton
+    private lateinit var fab_erase: FloatingActionButton
+    private lateinit var fab_delete: FloatingActionButton
+    private lateinit var fab_menu: FloatingActionButton
     private lateinit var canvas: CustomCanvasView
     private lateinit var sharedViewModel: SharedViewModel
 
-    var fab_container_clear: LinearLayout? = null
-    var fab_container_erase: LinearLayout? = null
-    var fab_container_delete: LinearLayout? = null
-    var fabOverlay: View? = null
+    private lateinit var fab_container_clear: LinearLayout
+    private lateinit var fab_container_erase: LinearLayout
+    private lateinit var fab_container_delete: LinearLayout
+    private lateinit var fabOverlay: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,27 +66,27 @@ class MainActivity : AppCompatActivity() {
         fab_container_delete = findViewById(R.id.fab_container_undo)
         fabOverlay = findViewById(R.id.fabOverlay)
         fab_menu = findViewById(R.id.fab_menu)
-        fab_menu!!.setOnClickListener {
+        fab_menu.setOnClickListener {
             if (!isFABOpen) {
                 showFABMenu()
             } else {
                 closeFABMenu()
             }
         }
-        fabOverlay!!.setOnClickListener {
+        fabOverlay.setOnClickListener {
             closeFABMenu()
         }
 
         fab_clear = findViewById(R.id.fab_clear)
-        fab_clear!!.setOnClickListener {
+        fab_clear.setOnClickListener {
             //                closeFABMenu()
         }
         fab_erase = findViewById(R.id.fab_erase)
-        fab_erase!!.setOnClickListener {
+        fab_erase.setOnClickListener {
             //closeFABMenu()
         }
         fab_delete = findViewById(R.id.fab_undo)
-        fab_delete!!.setOnClickListener {
+        fab_delete.setOnClickListener {
         }
     }
 
