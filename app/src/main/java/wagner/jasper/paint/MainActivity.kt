@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observePathChanges() {
         sharedViewModel.path.observe(this, Observer {
-            Log.i("SharedViewModel","observePathChanges()" )
+            Log.i("SharedViewModel", "observePathChanges()")
             canvas.drawPath(it)
         })
     }
@@ -87,37 +87,32 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun instantiateFABMenu() {
-        val layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        customFABView = layoutInflater.inflate(R.layout.fab_menu, null, false)
-
-        customFABView.apply {
-            fab_container_clear = findViewById(R.id.fab_container_clear)
-            fab_container_erase = findViewById(R.id.fab_container_erase)
-            fab_container_delete = findViewById(R.id.fab_container_undo)
-            fabOverlay = findViewById(R.id.fabOverlay)
-            fab_menu = findViewById(R.id.fab_menu)
-            fab_menu!!.setOnClickListener {
-                if (!isFABOpen) {
-                    showFABMenu()
-                } else {
-                    closeFABMenu()
-                }
-            }
-            fabOverlay!!.setOnClickListener {
+        fab_container_clear = findViewById(R.id.fab_container_clear)
+        fab_container_erase = findViewById(R.id.fab_container_erase)
+        fab_container_delete = findViewById(R.id.fab_container_undo)
+        fabOverlay = findViewById(R.id.fabOverlay)
+        fab_menu = findViewById(R.id.fab_menu)
+        fab_menu!!.setOnClickListener {
+            if (!isFABOpen) {
+                showFABMenu()
+            } else {
                 closeFABMenu()
             }
+        }
+        fabOverlay!!.setOnClickListener {
+            closeFABMenu()
+        }
 
-            fab_clear = findViewById(R.id.fab_clear)
-            fab_clear!!.setOnClickListener {
-                //                closeFABMenu()
-            }
-            fab_erase = findViewById(R.id.fab_erase)
-            fab_erase!!.setOnClickListener {
-                //closeFABMenu()
-            }
-            fab_delete = findViewById(R.id.fab_undo)
-            fab_delete!!.setOnClickListener {
-            }
+        fab_clear = findViewById(R.id.fab_clear)
+        fab_clear!!.setOnClickListener {
+            //                closeFABMenu()
+        }
+        fab_erase = findViewById(R.id.fab_erase)
+        fab_erase!!.setOnClickListener {
+            //closeFABMenu()
+        }
+        fab_delete = findViewById(R.id.fab_undo)
+        fab_delete!!.setOnClickListener {
         }
     }
 

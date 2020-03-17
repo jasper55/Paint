@@ -129,7 +129,7 @@ class CustomCanvasView @JvmOverloads constructor(
             sharedViewModel.touchMove()
             // TODO replace it with observe
 //            drawPath(sharedViewModel.path.value!!)
-//            extraCanvas.drawPath(sharedViewModel.path.value!!, paintStyle)
+            extraCanvas.drawPath(sharedViewModel.path.value!!, paintStyle)
         }
         // forces to redraw the on the screen with the updated path
         invalidate()
