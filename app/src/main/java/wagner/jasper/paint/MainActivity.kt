@@ -94,22 +94,22 @@ class MainActivity : AppCompatActivity() {
     private fun showFABMenu() {
         isFABOpen = true
         //applyBlurOnBackground();
-        fab_container_clear!!.visibility = CoordinatorLayout.VISIBLE
-        fab_container_delete!!.visibility = CoordinatorLayout.VISIBLE
-        fab_container_erase!!.visibility = CoordinatorLayout.VISIBLE
-        fabOverlay!!.visibility = CoordinatorLayout.VISIBLE
-        fab_menu!!.animate().rotationBy(270F)
+        fab_container_clear.visibility = CoordinatorLayout.VISIBLE
+        fab_container_delete.visibility = CoordinatorLayout.VISIBLE
+        fab_container_erase.visibility = CoordinatorLayout.VISIBLE
+        fabOverlay.visibility = CoordinatorLayout.VISIBLE
+        fab_menu.animate().rotationBy(270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
                 override fun onAnimationEnd(animator: Animator) {}
                 override fun onAnimationCancel(animator: Animator) {}
                 override fun onAnimationRepeat(animator: Animator) {}
             })
-        fab_container_clear!!.animate()
+        fab_container_clear.animate()
             .translationY(-resources.getDimension(R.dimen.standard_175))
-        fab_container_delete!!.animate()
+        fab_container_delete.animate()
             .translationY(-resources.getDimension(R.dimen.standard_120))
-        fab_container_erase!!.animate()
+        fab_container_erase.animate()
             .translationY(-resources.getDimension(R.dimen.standard_65))
     }
 
@@ -117,18 +117,18 @@ class MainActivity : AppCompatActivity() {
     private fun closeFABMenu() {
         //        removeBlurOnBackground();
         isFABOpen = false
-        fabOverlay!!.visibility = CoordinatorLayout.GONE
-        fab_container_clear!!.animate().translationY(0F)
-        fab_container_delete!!.animate().translationY(0F)
-        fab_container_erase!!.animate().translationY(0F)
-        fab_menu!!.animate().rotationBy(-270F)
+        fabOverlay.visibility = CoordinatorLayout.GONE
+        fab_container_clear.animate().translationY(0F)
+        fab_container_delete.animate().translationY(0F)
+        fab_container_erase.animate().translationY(0F)
+        fab_menu.animate().rotationBy(-270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
                 override fun onAnimationEnd(animator: Animator) {
                     if (!isFABOpen) {
-                        fab_container_clear!!.visibility = CoordinatorLayout.GONE
-                        fab_container_delete!!.visibility = CoordinatorLayout.GONE
-                        fab_container_erase!!.visibility = CoordinatorLayout.GONE
+                        fab_container_clear.visibility = CoordinatorLayout.GONE
+                        fab_container_delete.visibility = CoordinatorLayout.GONE
+                        fab_container_erase.visibility = CoordinatorLayout.GONE
                     }
                 }
 
