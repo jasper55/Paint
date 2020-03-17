@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
@@ -22,14 +23,14 @@ class MainActivity : AppCompatActivity() {
     private var isFABOpen = false
     private lateinit var fab_clear: FloatingActionButton
     private lateinit var fab_erase: FloatingActionButton
-    private lateinit var fab_delete: FloatingActionButton
+    private lateinit var fab_undo: FloatingActionButton
     private lateinit var fab_menu: FloatingActionButton
     private lateinit var canvas: CustomCanvasView
     private lateinit var sharedViewModel: SharedViewModel
 
     private lateinit var fab_container_clear: LinearLayout
     private lateinit var fab_container_erase: LinearLayout
-    private lateinit var fab_container_delete: LinearLayout
+    private lateinit var fab_container_undo: LinearLayout
     private lateinit var fabOverlay: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,13 +50,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-
+        sharedViewModel.undoDrawLastPath()
     }
 
     private fun observePathChanges() {
         sharedViewModel.path.observe(this, Observer {
             Log.i("SharedViewModel", "observePathChanges()")
-            canvas.drawPath(it)
+            canvas.callInvalidate()
         })
     }
 
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     private fun instantiateFABMenu() {
         fab_container_clear = findViewById(R.id.fab_container_clear)
         fab_container_erase = findViewById(R.id.fab_container_erase)
-        fab_container_delete = findViewById(R.id.fab_container_undo)
+        fab_container_undo = findViewById(R.id.fab_container_undo)
         fabOverlay = findViewById(R.id.fabOverlay)
         fab_menu = findViewById(R.id.fab_menu)
         fab_menu.setOnClickListener {
@@ -85,8 +86,12 @@ class MainActivity : AppCompatActivity() {
         fab_erase.setOnClickListener {
             //closeFABMenu()
         }
-        fab_delete = findViewById(R.id.fab_undo)
-        fab_delete.setOnClickListener {
+        fab_undo = findViewById(R.id.fab_undo)
+        fab_undo.setOnClickListener {
+            Log.i("SharedViewModel", "undo()")
+            Toast.makeText(this,"undo pressed", Toast.LENGTH_SHORT).show()
+            sharedViewModel.undoDrawLastPath()
+            canvas.invalidate()
         }
     }
 
@@ -95,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         isFABOpen = true
         //applyBlurOnBackground();
         fab_container_clear.visibility = CoordinatorLayout.VISIBLE
-        fab_container_delete.visibility = CoordinatorLayout.VISIBLE
+        fab_container_undo.visibility = CoordinatorLayout.VISIBLE
         fab_container_erase.visibility = CoordinatorLayout.VISIBLE
         fabOverlay.visibility = CoordinatorLayout.VISIBLE
         fab_menu.animate().rotationBy(270F)
@@ -107,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             })
         fab_container_clear.animate()
             .translationY(-resources.getDimension(R.dimen.standard_175))
-        fab_container_delete.animate()
+        fab_container_undo.animate()
             .translationY(-resources.getDimension(R.dimen.standard_120))
         fab_container_erase.animate()
             .translationY(-resources.getDimension(R.dimen.standard_65))
@@ -119,7 +124,7 @@ class MainActivity : AppCompatActivity() {
         isFABOpen = false
         fabOverlay.visibility = CoordinatorLayout.GONE
         fab_container_clear.animate().translationY(0F)
-        fab_container_delete.animate().translationY(0F)
+        fab_container_undo.animate().translationY(0F)
         fab_container_erase.animate().translationY(0F)
         fab_menu.animate().rotationBy(-270F)
             .setListener(object : Animator.AnimatorListener {
@@ -127,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onAnimationEnd(animator: Animator) {
                     if (!isFABOpen) {
                         fab_container_clear.visibility = CoordinatorLayout.GONE
-                        fab_container_delete.visibility = CoordinatorLayout.GONE
+                        fab_container_undo.visibility = CoordinatorLayout.GONE
                         fab_container_erase.visibility = CoordinatorLayout.GONE
                     }
                 }

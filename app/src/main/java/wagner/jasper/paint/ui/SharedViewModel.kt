@@ -38,16 +38,16 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
 
-
     // after the user has stopped moving and touches the screen again
     fun touchStart() {
         _currentPath.value!!.reset()
         _currentPath.value!!.moveTo(motionTouchEventX, motionTouchEventY)
         currentX = motionTouchEventX
         currentY = motionTouchEventY
-        Log.i("SharedViewModel","touchStart()")
+        Log.i("SharedViewModel", "touchStart()")
 
     }
+
     fun touchMove() {
         _currentPath.value!!.quadTo(
             currentX,
@@ -57,7 +57,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         )
         currentX = motionTouchEventX
         currentY = motionTouchEventY
-        Log.i("SharedViewModel","touchMove()")
+        Log.i("SharedViewModel", "touchMove()")
     }
 
     fun touchUp() {
@@ -66,11 +66,24 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             it.addPath(_currentPath.value!!)
         }
         _currentPath.value!!.reset()
-        Log.i("SharedViewModel","touchUp()")
+        Log.i("SharedViewModel", "touchUp()")
     }
 
 
-
+    fun undoDrawLastPath() {
+        _pathList.value!!.remove(_currentPath.value)
+        // set new currentPath to be able do further undo
+        pathList.value?.let { pathList ->
+            {
+                if (pathList.size != 0) {
+                    _currentPath.value = pathList.get(pathList.size)
+                    pathList.forEach {
+                    _path.value!!.addPath(it)
+                    }
+                }
+            }
+        }
+    }
 
 
     fun updateXY(x: Float, y: Float) {

@@ -21,7 +21,8 @@ class CustomCanvasView @JvmOverloads constructor(
 ) : View(context, attrs),
     ViewModelAccessor by ViewModelInjector(context) {
 
-    lateinit var extraCanvas: Canvas
+
+    private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
     private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.background, null)
@@ -29,7 +30,7 @@ class CustomCanvasView @JvmOverloads constructor(
     // the sensibility of the distance between two points is set here
     private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
 
-    val paintStyle = Paint().apply {
+    private val paintStyle = Paint().apply {
         color = drawColor
         // smooth edges of the drawing
         isAntiAlias = true
@@ -43,13 +44,18 @@ class CustomCanvasView @JvmOverloads constructor(
 
     init {
         initCanvas()
+        setWillNotDraw(false)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        Log.i("SharedViewModel", "onDraw()")
+
 //        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
         // Draw the drawing so far
-        canvas.drawPath(sharedViewModel.path.value!!, paintStyle)
+        sharedViewModel.path.value?.let {
+            canvas.drawPath(it, paintStyle)
+        }
 // Draw any current squiggle
         sharedViewModel.currentPath.value?.let {
             canvas.drawPath(it, paintStyle)
@@ -66,9 +72,9 @@ class CustomCanvasView @JvmOverloads constructor(
         extraCanvas.drawColor(backgroundColor)
     }
 
-    fun drawPath(path: Path) {
-        Log.i("SharedViewModel", "drawPath()")
-        extraCanvas.drawPath(path, paintStyle)
+    fun callInvalidate() {
+        Log.i("SharedViewModel", "invalidate()")
+//        extraCanvas.drawPath(path, paintStyle)
         invalidate()
     }
 
@@ -107,6 +113,7 @@ class CustomCanvasView @JvmOverloads constructor(
             sharedViewModel.touchMove()
         }
         // forces to redraw the on the screen with the updated path
+        // needed!!!!
         invalidate()
     }
 
