@@ -14,6 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.activity_main.*
 import wagner.jasper.paint.ui.CustomCanvasView
 import wagner.jasper.paint.ui.SharedViewModel
 
@@ -80,18 +81,19 @@ class MainActivity : AppCompatActivity() {
 
         fab_clear = findViewById(R.id.fab_clear)
         fab_clear.setOnClickListener {
-            //                closeFABMenu()
+            closeFABMenu()
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase.setOnClickListener {
-            //closeFABMenu()
+            closeFABMenu()
         }
         fab_undo = findViewById(R.id.fab_undo)
         fab_undo.setOnClickListener {
             Log.i("SharedViewModel", "undo()")
-            Toast.makeText(this,"undo pressed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "undo pressed", Toast.LENGTH_SHORT).show()
             sharedViewModel.undoDrawLastPath()
             canvas.invalidate()
+            closeFABMenu()
         }
     }
 

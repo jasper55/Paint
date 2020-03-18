@@ -62,9 +62,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun touchUp() {
         _pathList.value!!.add(currentPath.value!!)
-        _path.value?.let {
-            it.addPath(_currentPath.value!!)
-        }
+        _path.value?.addPath(_currentPath.value!!)
         _currentPath.value!!.reset()
         Log.i("SharedViewModel", "touchUp()")
     }
@@ -76,21 +74,28 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _pathList.value!!.remove(_currentPath.value)
         Log.i("SharedViewModel", "${_pathList.value!!.size} size after")
 
-        _path.value = Path()
-        _currentPath.value = Path()
+        val updatedPath = Path()
+
         // set new currentPath to be able do further undo
-        pathList.value?.let { pathList ->
-            {
+        val pathList = pathList.value!!
+        val size = pathList.size
 
-                if (pathList.size != 0) {
-                    _currentPath.value = pathList.get(pathList.size)
+        Log.i("SharedViewModel", "pathlist iteration")
+        if (size != 0) {
+            _currentPath.value = pathList.get(size - 1)
+            _path.value!!.reset()
 
-                    pathList.forEach {
-                        _path.value!!.addPath(it)
-                    }
-                }
+            for (i in 0 until size) {
+                Log.i("SharedViewModel", "$i")
+                updatedPath.addPath(pathList[i])
+                Log.i("SharedViewModel", "${_path.value!!}")
             }
+        } else {
+            _currentPath.value = Path()
+            _path.value = Path()
         }
+        _path.value = updatedPath
+
     }
 
 
