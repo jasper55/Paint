@@ -3,7 +3,6 @@ package wagner.jasper.paint.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -20,7 +19,6 @@ class CustomCanvasView @JvmOverloads constructor(
     attrs: AttributeSet?
 ) : View(context, attrs),
     ViewModelAccessor by ViewModelInjector(context) {
-
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
@@ -49,12 +47,9 @@ class CustomCanvasView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        Log.i("SharedViewModel", "onDraw()")
-
         sharedViewModel.path.value?.let {
             canvas.drawPath(it, paintStyle)
         }
-
         // Draw any current squiggle
         sharedViewModel.currentPath.value?.let {
             canvas.drawPath(it, paintStyle)
@@ -110,6 +105,14 @@ class CustomCanvasView @JvmOverloads constructor(
     fun setColor(r: Int, g: Int, b: Int) {
         val rgb = Color.rgb(r, g, b)
         paintStyle.color = rgb
+    }
+
+    fun toggleErase(eraseOn: Boolean) {
+        if (eraseOn) {
+            paintStyle.color = backgroundColor
+        } else {
+            paintStyle.color = drawColor
+        }
     }
 
 

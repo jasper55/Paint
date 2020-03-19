@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase.setOnClickListener {
+            sharedViewModel.toggleErase(canvas)
             closeFABMenu()
             canvas.invalidate()
         }

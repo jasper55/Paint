@@ -11,6 +11,8 @@ import kotlin.math.abs
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 
+    private var eraseToggle = false
+    private val isEraseOn = MutableLiveData<Boolean>()
     private val _pathList = MutableLiveData<ArrayList<Path>>()
     val pathList: LiveData<ArrayList<Path>>
         get() = _pathList
@@ -36,6 +38,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         get() = _undoPathList
 
     init {
+        isEraseOn.value = false
         _path.value = Path()
         _currentPath.value = Path()
         _pathList.value = ArrayList()
@@ -123,6 +126,12 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         val dx = abs(motionTouchEventX - currentX)
         val dy = abs(motionTouchEventY - currentY)
         return dx >= touchTolerance || dy >= touchTolerance
+    }
+
+    fun toggleErase(canvasView: CustomCanvasView) {
+        eraseToggle = !eraseToggle
+        isEraseOn.value = eraseToggle
+        canvasView.toggleErase(isEraseOn.value!!)
     }
 
     fun deleteSelectedPath(path: Path) {
