@@ -26,19 +26,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fab_erase: FloatingActionButton
     private lateinit var fab_undo: FloatingActionButton
     private lateinit var fab_menu: FloatingActionButton
-    private lateinit var canvas: CustomCanvasView
-    private lateinit var sharedViewModel: SharedViewModel
 
     private lateinit var fab_container_clear: LinearLayout
     private lateinit var fab_container_erase: LinearLayout
     private lateinit var fab_container_undo: LinearLayout
     private lateinit var fabOverlay: View
 
+    private lateinit var canvas: CustomCanvasView
+    private lateinit var sharedViewModel: SharedViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
-        canvas = CustomCanvasView(this, null)
         setContentView(R.layout.activity_main)
+
+        // link to inflated view in xml
+        canvas = custom_canvas_view
         instantiateFABMenu()
     }
 
@@ -92,8 +96,8 @@ class MainActivity : AppCompatActivity() {
             Log.i("SharedViewModel", "undo()")
             Toast.makeText(this, "undo pressed", Toast.LENGTH_SHORT).show()
             sharedViewModel.undoDrawLastPath()
-//            canvas.invalidate()
             closeFABMenu()
+            canvas.invalidate()
         }
     }
 

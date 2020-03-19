@@ -50,7 +50,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         currentX = motionTouchEventX
         currentY = motionTouchEventY
         Log.i("SharedViewModel", "touchStart()")
-
     }
 
     fun touchMove() {
@@ -71,15 +70,11 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _currentPath.value = Path()
         Log.i("SharedViewModel", "touchUp()")
     }
-
-
+    
     fun undoDrawLastPath() {
         val lastPath = _pathList.value!!.last()
         _undoPath.value!!.addPath(lastPath)
-        Log.i("SharedViewModel", "${_pathList.value!!.size} size before")
-
         _pathList.value!!.remove(lastPath)
-
         _path.value!!.reset()
 
         for (path in _pathList.value!!) {
