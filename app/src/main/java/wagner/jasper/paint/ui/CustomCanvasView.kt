@@ -51,18 +51,11 @@ class CustomCanvasView @JvmOverloads constructor(
         super.onDraw(canvas)
         Log.i("SharedViewModel", "onDraw()")
 
-//        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
-        // Draw the drawing so far
-//        val paths = sharedViewModel.pathList.value
-//        if (paths != null) {
-//            for (path in paths) {
-//                canvas.drawPath(path, paintStyle)
-//            }
-//        }
         sharedViewModel.path.value?.let {
             canvas.drawPath(it, paintStyle)
         }
-// Draw any current squiggle
+
+        // Draw any current squiggle
         sharedViewModel.currentPath.value?.let {
             canvas.drawPath(it, paintStyle)
         }
@@ -80,7 +73,6 @@ class CustomCanvasView @JvmOverloads constructor(
 
     fun callInvalidate() {
         Log.i("SharedViewModel", "invalidate()")
-//        extraCanvas.drawPath(path, paintStyle)
         invalidate()
     }
 

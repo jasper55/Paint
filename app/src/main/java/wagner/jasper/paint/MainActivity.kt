@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     private fun observePathChanges() {
         sharedViewModel.path.observe(this, Observer {
             Log.i("SharedViewModel", "observePathChanges()")
-            canvas.callInvalidate()
         })
     }
 

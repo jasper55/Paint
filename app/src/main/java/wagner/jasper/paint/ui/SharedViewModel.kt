@@ -70,7 +70,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _currentPath.value = Path()
         Log.i("SharedViewModel", "touchUp()")
     }
-    
+
     fun undoDrawLastPath() {
         val lastPath = _pathList.value!!.last()
         _undoPath.value!!.addPath(lastPath)
@@ -81,52 +81,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             _path.value!!.addPath(path)
         }
         _currentPath.value!!.reset()
-
-//        Log.i("SharedViewModel", "${_pathList.value!!.size} size after")
-//
-//        val updatedPath = Path()
-//
-//         set new currentPath to be able do further undo
-//        val pathList = pathList.value!!
-//        val size = pathList.size
-//
-//        Log.i("SharedViewModel", "pathlist iteration")
-//        if (size != 0) {
-//            _currentPath.value = pathList.get(size - 1)
-//            _path.value!!.reset()
-//
-//            for (i in 0 until size) {
-//                Log.i("SharedViewModel", "$i")
-//                updatedPath.addPath(pathList[i])
-//                Log.i("SharedViewModel", "${_path.value!!}")
-//            }
-//        } else {
-//            _currentPath.value = Path()
-//            _path.value = Path()
-//        }
-//        _path.value = updatedPath
     }
 
-
-//    fun undo() {
-//        if (mPaths.isEmpty() && mLastPaths.isNotEmpty()) {
-//            mPaths = mLastPaths.clone() as LinkedHashMap<MyPath, PaintOptions>
-//            mLastPaths.clear()
-//            invalidate()
-//            return
-//        }
-//        if (mPaths.isEmpty()) {
-//            return
-//        }
-//        val lastPath = mPaths.values.lastOrNull()
-//        val lastKey = mPaths.keys.lastOrNull()
-//
-//        mPaths.remove(lastKey)
-//        if (lastPath != null && lastKey != null) {
-//            mUndonePaths[lastKey] = lastPath
-//        }
-//        invalidate()
-//    }
 
     fun updateXY(x: Float, y: Float) {
         motionTouchEventX = x
@@ -137,12 +93,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         val dx = abs(motionTouchEventX - currentX)
         val dy = abs(motionTouchEventY - currentY)
         return dx >= touchTolerance || dy >= touchTolerance
-    }
-
-
-    fun deleteLastPath() {
-        val index = _pathList.value!!.size
-        _pathList.value!!.removeAt(index)
     }
 
     fun deleteSelectedPath(path: Path) {
