@@ -25,11 +25,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fab_clear: FloatingActionButton
     private lateinit var fab_erase: FloatingActionButton
     private lateinit var fab_undo: FloatingActionButton
+    private lateinit var fab_redo: FloatingActionButton
     private lateinit var fab_menu: FloatingActionButton
 
     private lateinit var fab_container_clear: LinearLayout
     private lateinit var fab_container_erase: LinearLayout
     private lateinit var fab_container_undo: LinearLayout
+    private lateinit var fab_container_redo: LinearLayout
     private lateinit var fabOverlay: View
 
     private lateinit var canvas: CustomCanvasView
@@ -69,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear = findViewById(R.id.fab_container_clear)
         fab_container_erase = findViewById(R.id.fab_container_erase)
         fab_container_undo = findViewById(R.id.fab_container_undo)
+        fab_container_redo = findViewById(R.id.fab_container_redo)
         fabOverlay = findViewById(R.id.fabOverlay)
         fab_menu = findViewById(R.id.fab_menu)
         fab_menu.setOnClickListener {
@@ -90,15 +93,19 @@ class MainActivity : AppCompatActivity() {
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase.setOnClickListener {
-            sharedViewModel.redo()
             closeFABMenu()
             canvas.invalidate()
         }
         fab_undo = findViewById(R.id.fab_undo)
         fab_undo.setOnClickListener {
-            Log.i("SharedViewModel", "undo()")
-            Toast.makeText(this, "undo pressed", Toast.LENGTH_SHORT).show()
             sharedViewModel.undoDrawLastPath()
+            closeFABMenu()
+            canvas.invalidate()
+        }
+
+        fab_redo = findViewById(R.id.fab_redo)
+        fab_redo.setOnClickListener {
+            sharedViewModel.redo()
             closeFABMenu()
             canvas.invalidate()
         }
@@ -111,6 +118,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear.visibility = CoordinatorLayout.VISIBLE
         fab_container_undo.visibility = CoordinatorLayout.VISIBLE
         fab_container_erase.visibility = CoordinatorLayout.VISIBLE
+        fab_container_redo.visibility = CoordinatorLayout.VISIBLE
         fabOverlay.visibility = CoordinatorLayout.VISIBLE
         fab_menu.animate().rotationBy(270F)
             .setListener(object : Animator.AnimatorListener {
@@ -119,6 +127,8 @@ class MainActivity : AppCompatActivity() {
                 override fun onAnimationCancel(animator: Animator) {}
                 override fun onAnimationRepeat(animator: Animator) {}
             })
+        fab_container_redo.animate()
+            .translationY(-resources.getDimension(R.dimen.standard_230))
         fab_container_clear.animate()
             .translationY(-resources.getDimension(R.dimen.standard_175))
         fab_container_undo.animate()
@@ -135,6 +145,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear.animate().translationY(0F)
         fab_container_undo.animate().translationY(0F)
         fab_container_erase.animate().translationY(0F)
+        fab_container_redo.animate().translationY(0F)
         fab_menu.animate().rotationBy(-270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
@@ -143,6 +154,7 @@ class MainActivity : AppCompatActivity() {
                         fab_container_clear.visibility = CoordinatorLayout.GONE
                         fab_container_undo.visibility = CoordinatorLayout.GONE
                         fab_container_erase.visibility = CoordinatorLayout.GONE
+                        fab_container_redo.visibility = CoordinatorLayout.GONE
                     }
                 }
 

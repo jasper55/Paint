@@ -4,4 +4,5 @@
     <string name="label_erase">erase</string>
     <string name="label_undo">undo</string>
     <string name="label_clear">clear</string>
+    <string name="label_redo">redo</string>
 </resources>

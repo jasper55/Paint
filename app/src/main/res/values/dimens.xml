@@ -7,4 +7,5 @@
     <dimen name="standard_65">65dp</dimen>
     <dimen name="standard_23">23dp</dimen>
     <dimen name="standard_12">12dp</dimen>
+    <dimen name="standard_230">230dp</dimen>
 </resources>

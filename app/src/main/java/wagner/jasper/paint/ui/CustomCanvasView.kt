@@ -70,7 +70,7 @@ class CustomCanvasView @JvmOverloads constructor(
         extraCanvas = Canvas(extraBitmap)
         extraCanvas.drawColor(backgroundColor)
     }
-    
+
     // onSizeChanged is for initilalizing nothing visible happens here
     override fun onSizeChanged(width: Int, height: Int, oldwidth: Int, oldheight: Int) {
         super.onSizeChanged(width, height, oldwidth, oldheight)
@@ -105,9 +105,6 @@ class CustomCanvasView @JvmOverloads constructor(
         if (sharedViewModel.isTouchEventWithinTolerance(touchTolerance)) {
             sharedViewModel.touchMove()
         }
-        // forces to redraw the on the screen with the updated path
-        // needed!!!!
-//        invalidate()
     }
 
     fun setColor(r: Int, g: Int, b: Int) {
@@ -118,8 +115,6 @@ class CustomCanvasView @JvmOverloads constructor(
 
     companion object {
         const val STROKE_WIDTH = 12f
-
-
     }
 
 
