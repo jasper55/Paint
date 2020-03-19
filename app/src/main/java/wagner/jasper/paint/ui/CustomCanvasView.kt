@@ -53,6 +53,12 @@ class CustomCanvasView @JvmOverloads constructor(
 
 //        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
         // Draw the drawing so far
+//        val paths = sharedViewModel.pathList.value
+//        if (paths != null) {
+//            for (path in paths) {
+//                canvas.drawPath(path, paintStyle)
+//            }
+//        }
         sharedViewModel.path.value?.let {
             canvas.drawPath(it, paintStyle)
         }
@@ -104,6 +110,7 @@ class CustomCanvasView @JvmOverloads constructor(
                 Toast.makeText(activity, "screen touched", Toast.LENGTH_SHORT).show()
             }
         }
+        invalidate()
         return true
     }
 
@@ -114,7 +121,7 @@ class CustomCanvasView @JvmOverloads constructor(
         }
         // forces to redraw the on the screen with the updated path
         // needed!!!!
-        invalidate()
+//        invalidate()
     }
 
     fun setColor(r: Int, g: Int, b: Int) {

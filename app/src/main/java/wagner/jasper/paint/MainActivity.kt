@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             Log.i("SharedViewModel", "undo()")
             Toast.makeText(this, "undo pressed", Toast.LENGTH_SHORT).show()
             sharedViewModel.undoDrawLastPath()
-            canvas.invalidate()
+//            canvas.invalidate()
             closeFABMenu()
         }
     }
