@@ -46,6 +46,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     // after the user has stopped moving and touches the screen again
     fun touchStart() {
+        _undoPathList.value = ArrayList()
         _currentPath.value!!.reset()
         _currentPath.value!!.moveTo(motionTouchEventX, motionTouchEventY)
         currentX = motionTouchEventX
@@ -73,27 +74,37 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun undoDrawLastPath() {
-        val lastPath = _pathList.value!!.last()
-        _undoPathList.value!!.add(lastPath)
-        _pathList.value!!.remove(lastPath)
-        _path.value!!.reset()
+        if (_pathList.value!!.isNotEmpty()) {
+            val lastPath = _pathList.value!!.last()
+            _undoPathList.value!!.add(lastPath)
+            _pathList.value!!.remove(lastPath)
+            _path.value!!.reset()
 
-        for (path in _pathList.value!!) {
-            _path.value!!.addPath(path)
+            for (path in _pathList.value!!) {
+                _path.value!!.addPath(path)
+            }
+            _currentPath.value!!.reset()
+        } else {
+            return
         }
-        _currentPath.value!!.reset()
     }
 
     fun redo() {
-        val pathToRestore = _undoPathList.value!!.last()
-        _pathList.value!!.add(pathToRestore)
-        _undoPathList.value!!.remove(pathToRestore)
-        _path.value!!.reset()
+        if (_undoPathList.value!!.isNotEmpty()) {
 
-        for (path in _pathList.value!!) {
-            _path.value!!.addPath(path)
+            val pathToRestore = _undoPathList.value!!.last()
+            _pathList.value!!.add(pathToRestore)
+            _undoPathList.value!!.remove(pathToRestore)
+            _path.value!!.reset()
+
+            for (path in _pathList.value!!) {
+                _path.value!!.addPath(path)
+            }
+            _currentPath.value!!.reset()
+
+        } else {
+            return
         }
-        _currentPath.value!!.reset()
     }
 
 
