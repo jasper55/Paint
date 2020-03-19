@@ -31,15 +31,16 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     val path: LiveData<Path>
         get() = _path
 
-    private val _undoPath = MutableLiveData<Path>()
-    val undoPath: LiveData<Path>
-        get() = _undoPath
+    private val _undoPathList = MutableLiveData<ArrayList<Path>>()
+    val undoPathList: LiveData<ArrayList<Path>>
+        get() = _undoPathList
 
     init {
         _path.value = Path()
-        _undoPath.value = Path()
         _currentPath.value = Path()
         _pathList.value = ArrayList()
+        _undoPathList.value = ArrayList()
+
     }
 
 
@@ -73,8 +74,20 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun undoDrawLastPath() {
         val lastPath = _pathList.value!!.last()
-        _undoPath.value!!.addPath(lastPath)
+        _undoPathList.value!!.add(lastPath)
         _pathList.value!!.remove(lastPath)
+        _path.value!!.reset()
+
+        for (path in _pathList.value!!) {
+            _path.value!!.addPath(path)
+        }
+        _currentPath.value!!.reset()
+    }
+
+    fun redo() {
+        val pathToRestore = _undoPathList.value!!.last()
+        _pathList.value!!.add(pathToRestore)
+        _undoPathList.value!!.remove(pathToRestore)
         _path.value!!.reset()
 
         for (path in _pathList.value!!) {

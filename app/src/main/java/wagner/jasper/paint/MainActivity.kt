@@ -88,7 +88,9 @@ class MainActivity : AppCompatActivity() {
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase.setOnClickListener {
+            sharedViewModel.redo()
             closeFABMenu()
+            canvas.invalidate()
         }
         fab_undo = findViewById(R.id.fab_undo)
         fab_undo.setOnClickListener {
