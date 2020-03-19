@@ -70,13 +70,7 @@ class CustomCanvasView @JvmOverloads constructor(
         extraCanvas = Canvas(extraBitmap)
         extraCanvas.drawColor(backgroundColor)
     }
-
-    fun callInvalidate() {
-        Log.i("SharedViewModel", "invalidate()")
-        invalidate()
-    }
-
-
+    
     // onSizeChanged is for initilalizing nothing visible happens here
     override fun onSizeChanged(width: Int, height: Int, oldwidth: Int, oldheight: Int) {
         super.onSizeChanged(width, height, oldwidth, oldheight)

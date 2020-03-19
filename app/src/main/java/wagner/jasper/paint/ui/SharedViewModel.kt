@@ -40,7 +40,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _currentPath.value = Path()
         _pathList.value = ArrayList()
         _undoPathList.value = ArrayList()
-
     }
 
 
@@ -105,6 +104,13 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         } else {
             return
         }
+    }
+
+    fun clear() {
+        _path.value = Path()
+        _currentPath.value = Path()
+        _pathList.value = ArrayList()
+        _undoPathList.value = ArrayList()
     }
 
 
