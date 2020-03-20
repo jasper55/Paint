@@ -12,6 +12,7 @@ import wagner.jasper.paint.R
 import wagner.jasper.paint.util.ViewModelAccessor
 import wagner.jasper.paint.util.ViewModelInjector
 import android.graphics.*
+import wagner.jasper.paint.model.MyPaint
 
 
 class CustomCanvasView @JvmOverloads constructor(
@@ -28,16 +29,8 @@ class CustomCanvasView @JvmOverloads constructor(
     // the sensibility of the distance between two points is set here
     private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
 
-    private val paintStyle = Paint().apply {
+    val paintStyle = MyPaint.paintStyle.apply {
         color = drawColor
-        // smooth edges of the drawing
-        isAntiAlias = true
-        // samples down color with higher precision
-        isDither = true
-        style = Paint.Style.STROKE //what kind of drawing it is. default: FILL
-        strokeJoin = Paint.Join.ROUND //default MITER
-        strokeCap = Paint.Cap.ROUND  //default: BUTT
-        strokeWidth = STROKE_WIDTH
     }
 
     init {
@@ -47,8 +40,11 @@ class CustomCanvasView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
         sharedViewModel.path.value?.let {
-            canvas.drawPath(it, paintStyle)
+            for ((key, value) in it) {
+                canvas.drawPath(key, value)
+            }
         }
         // Draw any current squiggle
         sharedViewModel.currentPath.value?.let {
@@ -69,14 +65,6 @@ class CustomCanvasView @JvmOverloads constructor(
     // onSizeChanged is for initilalizing nothing visible happens here
     override fun onSizeChanged(width: Int, height: Int, oldwidth: Int, oldheight: Int) {
         super.onSizeChanged(width, height, oldwidth, oldheight)
-    }
-
-    // TODO restoring path after orientation changes not working yet
-    private fun restorePath() {
-        sharedViewModel.path.value?.let {
-            extraCanvas.drawPath(it, paintStyle)
-            invalidate()
-        }
     }
 
 

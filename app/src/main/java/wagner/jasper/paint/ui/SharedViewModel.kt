@@ -1,11 +1,14 @@
 package wagner.jasper.paint.ui
 
 import android.app.Application
+import android.graphics.Paint
 import android.graphics.Path
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import wagner.jasper.paint.model.MyPaint
+import wagner.jasper.paint.model.PaintOptions
 import kotlin.math.abs
 
 
@@ -13,13 +16,17 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private var eraseToggle = false
     private val isEraseOn = MutableLiveData<Boolean>()
-    private val _pathList = MutableLiveData<ArrayList<Path>>()
-    val pathList: LiveData<ArrayList<Path>>
+    private val _pathList = MutableLiveData<LinkedHashMap<Path, Paint>>()
+    val pathList: LiveData<LinkedHashMap<Path, Paint>>
         get() = _pathList
 
     private val _currentPath = MutableLiveData<Path>()
     val currentPath: LiveData<Path>
         get() = _currentPath
+
+    private val _currentPaint = MutableLiveData<Paint>()
+    val currentPaint: LiveData<Paint>
+        get() = _currentPaint
 
     private var motionTouchEventX = 0F
     private var motionTouchEventY = 0F
@@ -28,27 +35,33 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     private var currentX = 0F
     private var currentY = 0F
 
+    private var chacheHash = LinkedHashMap<Path, Paint>()
 
-    private val _path = MutableLiveData<Path>()
-    val path: LiveData<Path>
+    private val _path = MutableLiveData<LinkedHashMap<Path, Paint>>()
+    val path: LiveData<LinkedHashMap<Path, Paint>>
         get() = _path
 
-    private val _undoPathList = MutableLiveData<ArrayList<Path>>()
-    val undoPathList: LiveData<ArrayList<Path>>
+    private val _undoPathList = MutableLiveData<LinkedHashMap<Path, Paint>>()
+    val undoPathList: LiveData<LinkedHashMap<Path, Paint>>
         get() = _undoPathList
 
+    private val _paintOptions = MutableLiveData<PaintOptions>()
+    val paintOptions: LiveData<PaintOptions>
+        get() = _paintOptions
+
     init {
+        _currentPaint.value = MyPaint.paintStyle
         isEraseOn.value = false
-        _path.value = Path()
+        _path.value = LinkedHashMap()
         _currentPath.value = Path()
-        _pathList.value = ArrayList()
-        _undoPathList.value = ArrayList()
+        _pathList.value = LinkedHashMap()
+        _undoPathList.value = LinkedHashMap()
     }
 
 
     // after the user has stopped moving and touches the screen again
     fun touchStart() {
-        _undoPathList.value = ArrayList()
+        _undoPathList.value = LinkedHashMap()
         _currentPath.value!!.reset()
         _currentPath.value!!.moveTo(motionTouchEventX, motionTouchEventY)
         currentX = motionTouchEventX
@@ -69,22 +82,24 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun touchUp() {
-        _pathList.value!!.add(currentPath.value!!)
-        _path.value?.addPath(_currentPath.value!!)
+//        chacheHash[_currentPath.value!!] = _currentPaint.value!!
+        _pathList.value!!.set(_currentPath.value!!, _currentPaint.value!!)
+        _path.value?.set(_currentPath.value!!, _currentPaint.value!!)
         _currentPath.value = Path()
         Log.i("SharedViewModel", "touchUp()")
+        chacheHash.clear()
     }
 
     fun undoDrawLastPath() {
         if (_pathList.value!!.isNotEmpty()) {
-            val lastPath = _pathList.value!!.last()
-            _undoPathList.value!!.add(lastPath)
-            _pathList.value!!.remove(lastPath)
-            _path.value!!.reset()
 
-            for (path in _pathList.value!!) {
-                _path.value!!.addPath(path)
-            }
+            val key = _pathList.value!!.keys.last()
+            val value = _pathList.value!!.values.last()
+            _undoPathList.value!!.put(key,value)
+            _pathList.value!!.remove(key)
+            _path.value!!.clear()
+
+            _path.value = _pathList.value!!.clone() as LinkedHashMap<Path, Paint>
             _currentPath.value!!.reset()
         } else {
             return
@@ -93,27 +108,24 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun redo() {
         if (_undoPathList.value!!.isNotEmpty()) {
+            val key = _undoPathList.value!!.keys.last()
+            val value = _undoPathList.value!!.values.last()
+            _undoPathList.value!!.remove(key)
+            _pathList.value!!.put(key, value)
+            _path.value!!.clear()
 
-            val pathToRestore = _undoPathList.value!!.last()
-            _pathList.value!!.add(pathToRestore)
-            _undoPathList.value!!.remove(pathToRestore)
-            _path.value!!.reset()
-
-            for (path in _pathList.value!!) {
-                _path.value!!.addPath(path)
-            }
+            _path.value = _pathList.value!!.clone() as LinkedHashMap<Path, Paint>
             _currentPath.value!!.reset()
-
         } else {
             return
         }
     }
 
     fun clear() {
-        _path.value = Path()
+        _path.value = LinkedHashMap()
         _currentPath.value = Path()
-        _pathList.value = ArrayList()
-        _undoPathList.value = ArrayList()
+        _pathList.value = LinkedHashMap()
+        _undoPathList.value = LinkedHashMap()
     }
 
 
@@ -132,13 +144,23 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         eraseToggle = !eraseToggle
         isEraseOn.value = eraseToggle
         canvasView.toggleErase(isEraseOn.value!!)
+        _currentPaint.value = canvasView.paintStyle
     }
 
+    fun changePaint(canvasView: CustomCanvasView) {
+
+    }
+
+
     fun deleteSelectedPath(path: Path) {
-        _pathList.value!!.remove(path)
+//        _pathList.value!!.remove(path)
     }
 
     fun cleanPath() {
         cleanPath()
     }
+
+//    fun addPath(path: Path, options: PaintOptions) {
+//        _path.value!![path] = options
+//    }
 }
