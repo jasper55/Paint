@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        sharedViewModel.undoDrawLastPath()
+        sharedViewModel.undo()
     }
 
     private fun observePathChanges() {
@@ -98,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
         fab_undo = findViewById(R.id.fab_undo)
         fab_undo.setOnClickListener {
-            sharedViewModel.undoDrawLastPath()
+            sharedViewModel.undo()
             closeFABMenu()
             canvas.invalidate()
         }

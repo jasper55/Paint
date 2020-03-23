@@ -10,6 +10,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import wagner.jasper.paint.R
 import wagner.jasper.paint.model.MyPaint
 import kotlin.math.abs
 
@@ -54,8 +55,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         get() = _currentPaint
 
     init {
-        _backgroundColor.value = Color.WHITE
-        _drawColor.value = Color.BLACK
+        _backgroundColor.value = ColorUtils.setAlphaComponent(application.resources.getColor(R.color.background),255)
+        _drawColor.value = ColorUtils.setAlphaComponent(application.resources.getColor(R.color.drawColor),255)
         setCurrentPaint()
         _path.value = LinkedHashMap()
         _currentPath.value = Path()
@@ -73,11 +74,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         currentX = motionTouchEventX
         currentY = motionTouchEventY
         Log.i("SharedViewModel", "touchStart()")
-    }
-
-    private fun setCurrentPaint() {
-        val paint = MyPaint(isEraseOn.value!!,_backgroundColor.value!!,_drawColor.value!!)
-        _currentPaint.value = paint
     }
 
     fun touchMove() {
@@ -99,7 +95,11 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         Log.i("SharedViewModel", "touchUp()")
     }
 
-    fun undoDrawLastPath() {
+    private fun setCurrentPaint() {
+        _currentPaint.value = MyPaint(isEraseOn.value!!,_backgroundColor.value!!,_drawColor.value!!)
+    }
+
+    fun undo() {
         if (_pathList.value!!.isNotEmpty()) {
 
             val key = _pathList.value!!.keys.last()
@@ -166,7 +166,9 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun setBackgroundColor(newColor: Int) {
-        _backgroundColor.value = newColor
+        @ColorInt
+        val alphaColor = ColorUtils.setAlphaComponent(newColor, _currentPaint.value!!.alpha)
+        _backgroundColor.value = alphaColor
     }
 
     fun setAlpha(newAlpha: Int) {
