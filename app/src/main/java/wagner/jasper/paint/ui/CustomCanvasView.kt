@@ -7,12 +7,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
-import wagner.jasper.paint.R
 import wagner.jasper.paint.util.ViewModelAccessor
 import wagner.jasper.paint.util.ViewModelInjector
 import android.graphics.*
-import wagner.jasper.paint.model.MyPaint
 
 
 class CustomCanvasView @JvmOverloads constructor(
@@ -23,15 +20,15 @@ class CustomCanvasView @JvmOverloads constructor(
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
-    private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
-    private val backgroundColor = ResourcesCompat.getColor(resources, R.color.background, null)
+//    private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
+//    private val backgroundColor = ResourcesCompat.getColor(resources, R.color.background, null)
     // the drawing will be interpolated and not drawn for every pixel
     // the sensibility of the distance between two points is set here
     private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
 
-    val paintStyle = MyPaint.paintStyle.apply {
-        color = drawColor
-    }
+//    private var paintOptions = PaintOptions()
+
+//    private val paintStyle = MyPaint(isEraseOn)
 
     init {
         initCanvas()
@@ -43,12 +40,12 @@ class CustomCanvasView @JvmOverloads constructor(
 
         sharedViewModel.path.value?.let {
             for ((key, value) in it) {
-                canvas.drawPath(key, value)
+                canvas.drawPath(key, value.paint)
             }
         }
         // Draw any current squiggle
         sharedViewModel.currentPath.value?.let {
-            canvas.drawPath(it, paintStyle)
+            canvas.drawPath(it,sharedViewModel.currentPaint.value!!)
         }
     }
 
@@ -59,7 +56,7 @@ class CustomCanvasView @JvmOverloads constructor(
         val width = displayMetrics.widthPixels
         extraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         extraCanvas = Canvas(extraBitmap)
-        extraCanvas.drawColor(backgroundColor)
+        extraCanvas.drawColor(sharedViewModel.backgroundColor.value!!)
     }
 
     // onSizeChanged is for initilalizing nothing visible happens here
@@ -83,25 +80,25 @@ class CustomCanvasView @JvmOverloads constructor(
         return true
     }
 
-
     private fun touchMove() {
         if (sharedViewModel.isTouchEventWithinTolerance(touchTolerance)) {
             sharedViewModel.touchMove()
         }
     }
 
-    fun setColor(r: Int, g: Int, b: Int) {
-        val rgb = Color.rgb(r, g, b)
-        paintStyle.color = rgb
-    }
-
-    fun toggleErase(eraseOn: Boolean) {
-        if (eraseOn) {
-            paintStyle.color = backgroundColor
-        } else {
-            paintStyle.color = drawColor
-        }
-    }
+//    fun setColor(r: Int, g: Int, b: Int) {
+//        val rgb = Color.rgb(r, g, b)
+//        paintOptions.paint.color = rgb
+//    }
+//
+//    fun toggleErase(eraseOn: Boolean) {
+//        paintOptions.isErasOn = eraseOn
+//        if(eraseOn) {
+//            paintOptions.paint.color = MyPaint.backgroundColor
+//        } else {
+//            paintOptions.paint.color = MyPaint.drawColor
+//        }
+//    }
 
 
     companion object {
