@@ -16,6 +16,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 import wagner.jasper.paint.ui.CustomCanvasView
 import wagner.jasper.paint.ui.SharedViewModel
+import android.content.DialogInterface
+import android.graphics.Color
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.OnColorSelectedListener
+import com.flask.colorpicker.builder.ColorPickerClickListener
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -86,9 +94,10 @@ class MainActivity : AppCompatActivity() {
 
         fab_clear = findViewById(R.id.fab_clear)
         fab_clear.setOnClickListener {
-            sharedViewModel.clear()
+//            sharedViewModel.clear()
             closeFABMenu()
-            canvas.invalidate()
+            showDrawColorPicker()
+//            canvas.invalidate()
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase.setOnClickListener {
@@ -160,6 +169,28 @@ class MainActivity : AppCompatActivity() {
                 override fun onAnimationCancel(animator: Animator) {}
                 override fun onAnimationRepeat(animator: Animator) {}
             })
+    }
+
+    private fun showDrawColorPicker(){
+        ColorPickerDialogBuilder
+            .with(this)
+            .setTitle("Choose color")
+            .initialColor(Color.BLACK)
+            .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .density(12)
+            .setOnColorSelectedListener(object : OnColorSelectedListener {
+                override fun onColorSelected(selectedColor: Int) {
+                    sharedViewModel.setDrawColor(selectedColor)
+                }
+            })
+            .setPositiveButton("ok", object : ColorPickerClickListener {
+                override fun onClick(dialog: DialogInterface, selectedColor: Int, allColors: Array<Int>) {
+//                    sharedViewModel.setBackgroundColor(selectedColor)
+                }
+            })
+            .setNegativeButton("cancel", DialogInterface.OnClickListener { dialog, which -> })
+            .build()
+            .show()
     }
 
 }

@@ -46,4 +46,7 @@ dependencies {
 //    annotationProcessor "android.arch.lifecycle:compiler:$archLifecycleVersion"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // color picker
+    implementation 'com.github.QuadFlask:colorpicker:0.0.15'
 }
