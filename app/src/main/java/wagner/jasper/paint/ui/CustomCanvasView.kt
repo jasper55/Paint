@@ -86,24 +86,4 @@ class CustomCanvasView @JvmOverloads constructor(
         }
     }
 
-//    fun setColor(r: Int, g: Int, b: Int) {
-//        val rgb = Color.rgb(r, g, b)
-//        paintOptions.paint.color = rgb
-//    }
-//
-//    fun toggleErase(eraseOn: Boolean) {
-//        paintOptions.isErasOn = eraseOn
-//        if(eraseOn) {
-//            paintOptions.paint.color = MyPaint.backgroundColor
-//        } else {
-//            paintOptions.paint.color = MyPaint.drawColor
-//        }
-//    }
-
-
-    companion object {
-        const val STROKE_WIDTH = 12f
-    }
-
-
 }

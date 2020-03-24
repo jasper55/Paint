@@ -1,10 +1,14 @@
 package wagner.jasper.paint.model
 
 import android.graphics.Paint
-import wagner.jasper.paint.ui.CustomCanvasView
 
-data class MyPaint(var isEraseOn: Boolean = false, val backgroundColor: Int, val drawColor: Int): Paint() {
-
+data class MyPaint(
+    var isEraseOn: Boolean = false,
+    val backgroundColor: Int,
+    val drawColor: Int,
+    val alphaSet: Int,
+    val strokeWidthSet: Float
+): Paint() {
 
     val paint = Paint().apply {
         // smooth edges of the drawing
@@ -16,8 +20,8 @@ data class MyPaint(var isEraseOn: Boolean = false, val backgroundColor: Int, val
         strokeCap = Cap.ROUND  //default: BUTT
 
         // adjustable settings
-        alpha = 255
+        alpha = alphaSet
         color = if (isEraseOn) backgroundColor else drawColor
-        strokeWidth = CustomCanvasView.STROKE_WIDTH
+        strokeWidth = strokeWidthSet
     }
 }

@@ -1,8 +1,6 @@
 package wagner.jasper.paint.ui
 
 import android.app.Application
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Path
 import android.util.Log
 import androidx.annotation.ColorInt
@@ -27,11 +25,19 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _backgroundColor = MutableLiveData<Int>()
     val backgroundColor: LiveData<Int>
-    get() = _backgroundColor
+        get() = _backgroundColor
+
+    private val _strokeWidth = MutableLiveData<Float>(12f)
+    val strokeWidth: LiveData<Float>
+    get() = _strokeWidth
+
+    private val _colorAlpha = MutableLiveData<Int>(255)
+    val colorAlpha: LiveData<Int>
+        get() = _colorAlpha
 
     private val _drawColor = MutableLiveData<Int>()
-//    val drawColor: LiveData<Int>
-//        get() = _drawColor
+    val drawColor: LiveData<Int>
+        get() = _drawColor
 
     private var motionTouchEventX = 0F
     private var motionTouchEventY = 0F
@@ -55,15 +61,17 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         get() = _currentPaint
 
     init {
-        _backgroundColor.value = ColorUtils.setAlphaComponent(application.resources.getColor(R.color.background),255)
-        _drawColor.value = ColorUtils.setAlphaComponent(application.resources.getColor(R.color.drawColor),255)
+        _backgroundColor.value =
+            ColorUtils.setAlphaComponent(application.resources.getColor(R.color.background), 255)
+        _drawColor.value =
+            ColorUtils.setAlphaComponent(application.resources.getColor(R.color.drawColor), 255)
+        _colorAlpha.value = 255
         setCurrentPaint()
         _path.value = LinkedHashMap()
         _currentPath.value = Path()
         _pathList.value = LinkedHashMap()
         _undoPathList.value = LinkedHashMap()
     }
-
 
     // after the user has stopped moving and touches the screen again
     fun touchStart() {
@@ -96,7 +104,13 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun setCurrentPaint() {
-        _currentPaint.value = MyPaint(isEraseOn.value!!,_backgroundColor.value!!,_drawColor.value!!)
+        _currentPaint.value = MyPaint(
+            isEraseOn = isEraseOn.value!!,
+            backgroundColor = _backgroundColor.value!!,
+            drawColor = _drawColor.value!!,
+            alphaSet = _colorAlpha.value!!,
+            strokeWidthSet = _strokeWidth.value!!
+        )
     }
 
     fun undo() {
@@ -151,13 +165,13 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun toggleErase() {
         val previousEraseSetting = isEraseOn.value!!
-            _currentPaint.value!!.apply {
-                isEraseOn = !previousEraseSetting
-                color = if(previousEraseSetting == false) _backgroundColor.value!!
-                else _drawColor.value!!
-            }
-        isEraseOn.value = !previousEraseSetting
+        _currentPaint.value!!.apply {
+            isEraseOn = !previousEraseSetting
+            color = if (previousEraseSetting == false) _backgroundColor.value!!
+            else _drawColor.value!!
         }
+        isEraseOn.value = !previousEraseSetting
+    }
 
     fun setDrawColor(newColor: Int) {
         @ColorInt
@@ -173,11 +187,11 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun setAlpha(newAlpha: Int) {
         val alpha = (newAlpha * 255) / 100
-        _currentPaint.value!!.alpha = alpha
+        _colorAlpha.value = newAlpha
     }
 
     fun setStrokeWidth(newStrokeWidth: Float) {
-        currentPaint.value!!.strokeWidth = newStrokeWidth
+        _strokeWidth.value = newStrokeWidth
     }
 
     fun deleteSelectedPath(path: Path) {
@@ -187,6 +201,9 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     fun cleanPath() {
         cleanPath()
     }
+
+
+
 
 //    fun addPath(path: Path, options: PaintOptions) {
 //        _path.value!![path] = options
