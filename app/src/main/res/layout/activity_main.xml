@@ -50,13 +50,27 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="64dp"
         android:layout_marginStart="64dp"
-        android:layout_marginBottom="80dp"
-        android:max="255"
+        android:layout_marginBottom="32dp"
+        android:max="100"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/apply_button" />
 
+    <Button
+        android:id="@+id/apply_button"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginBottom="80dp"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone"
+        android:text="APPLY"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorAccent"
+        android:background="@drawable/button_rounded_corners"
+        app:layout_constraintEnd_toEndOf="@id/color_alpha_seek_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
     <include

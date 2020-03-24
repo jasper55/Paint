@@ -15,6 +15,7 @@ import kotlin.math.abs
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 
     private var isEraseOn = MutableLiveData<Boolean>(false)
+    
     private val _pathList = MutableLiveData<LinkedHashMap<Path, MyPaint>>()
     val pathList: LiveData<LinkedHashMap<Path, MyPaint>>
         get() = _pathList
@@ -45,8 +46,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     // to cache latest x and y values
     private var currentX = 0F
     private var currentY = 0F
-
-    private var chacheHash = LinkedHashMap<Path, MyPaint>()
 
     private val _path = MutableLiveData<LinkedHashMap<Path, MyPaint>>()
     val path: LiveData<LinkedHashMap<Path, MyPaint>>
@@ -202,10 +201,4 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         cleanPath()
     }
 
-
-
-
-//    fun addPath(path: Path, options: PaintOptions) {
-//        _path.value!![path] = options
-//    }
 }

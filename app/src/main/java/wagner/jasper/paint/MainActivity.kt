@@ -25,6 +25,7 @@ import com.flask.colorpicker.builder.ColorPickerClickListener
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import wagner.jasper.paint.ui.CircleView
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var circleView: CircleView
     private lateinit var strokeWidthSeekbar: SeekBar
     private lateinit var colorAlphaSeekbar: SeekBar
+    private lateinit var applyButton: Button
     private lateinit var sharedViewModel: SharedViewModel
 
 
@@ -64,8 +66,8 @@ class MainActivity : AppCompatActivity() {
         initColorPicker()
         initStrokeSeekbars()
         initCircleView()
+        initApplyButton()
     }
-
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         observePathChanges()
@@ -84,6 +86,11 @@ class MainActivity : AppCompatActivity() {
         })
         sharedViewModel.drawColor.observe(this, Observer {
             circleView.setColor(it)
+            strokeWidthSeekbar.progressDrawable.setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                strokeWidthSeekbar.thumb.setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            }
+
             Log.i("SharedViewModel", "observeDrawColor()")
         })
         sharedViewModel.strokeWidth.observe(this, Observer {
@@ -140,6 +147,10 @@ class MainActivity : AppCompatActivity() {
             closeFABMenu()
             canvas.invalidate()
         }
+    }
+
+    private fun initApplyButton() {
+        applyButton = apply_button
     }
 
     private fun showCircleView() {
@@ -201,8 +212,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCircleView() {
         circleView = circle_view
-//        circleView.radius = sharedViewModel.currentPaint.value!!.strokeWidthSet
-//        circleView.setColor(sharedViewModel.currentPaint.value!!.drawColor)
         circleView.invalidate()
     }
 
@@ -217,7 +226,7 @@ class MainActivity : AppCompatActivity() {
                 .with(this)
                 .setTitle("Choose color")
                 .initialColor(sharedViewModel.currentPaint.value?.drawColor ?: Color.BLUE)
-                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
                 .showAlphaSlider(false)
                 .density(12)
                 .setOnColorSelectedListener(object : OnColorSelectedListener {
@@ -231,9 +240,10 @@ class MainActivity : AppCompatActivity() {
                         selectedColor: Int,
                         allColors: Array<Int>
                     ) {
-                        showStrokeWidthSeekbar()
                         showColorAlphaSeekbar()
                         showCircleView()
+                        showStrokeWidthSeekbar()
+                        showApplyButton()
                     }
                 })
                 .setNegativeButton("cancel") { dialog, which -> }
@@ -243,14 +253,11 @@ class MainActivity : AppCompatActivity() {
     private fun initStrokeSeekbars() {
         colorAlphaSeekbar = findViewById(R.id.color_alpha_seek_bar)
         strokeWidthSeekbar = findViewById(R.id.stroke_width_seek_bar)
-        val color = sharedViewModel.currentPaint.value!!.drawColor
 
-        strokeWidthSeekbar.progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-        colorAlphaSeekbar.progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        colorAlphaSeekbar.progressDrawable.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            strokeWidthSeekbar.thumb.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-            colorAlphaSeekbar.thumb.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN)
+            colorAlphaSeekbar.thumb.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
         }
     }
 
@@ -260,12 +267,8 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
                 sharedViewModel.setStrokeWidth(width.toFloat())
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
 
@@ -274,29 +277,25 @@ class MainActivity : AppCompatActivity() {
         colorAlphaSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
                 sharedViewModel.setAlpha(width)
-                Toast.makeText(applicationContext, "$width", Toast.LENGTH_SHORT).show()
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                strokeWidthSeekbar.visibility = View.GONE
-                colorAlphaSeekbar.visibility = View.GONE
-                circleView.visibility = View.GONE
-                canvas.visibility = View.VISIBLE
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
 
-    private fun applyPaintChanges() {
+    private fun showApplyButton(){
+        applyButton.visibility = View.VISIBLE
+        applyButton.setOnClickListener {
+            applyPaintChanges()
+        }
+    }
 
+    private fun applyPaintChanges() {
         strokeWidthSeekbar.visibility = View.GONE
         colorAlphaSeekbar.visibility = View.GONE
         circleView.visibility = View.GONE
+        applyButton.visibility = View.GONE
         canvas.visibility = View.VISIBLE
-
     }
 
 }
