@@ -27,7 +27,9 @@ import android.widget.SeekBar
 import android.os.Build
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import wagner.jasper.paint.ui.CircleView
 
 
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fabOverlay: View
 
     private lateinit var canvas: CustomCanvasView
+    private lateinit var toolbar: ActionBar
     private lateinit var colorPicker: AlertDialog
     private lateinit var circleView: CircleView
     private lateinit var strokeWidthSeekbar: SeekBar
@@ -62,11 +65,44 @@ class MainActivity : AppCompatActivity() {
 
         // link to inflated view in xml -- neccessary for undo/redo
         canvas = custom_canvas_view
+        initBottomNavigation()
         instantiateFABMenu()
         initColorPicker()
         initStrokeSeekbars()
         initCircleView()
         initApplyButton()
+    }
+
+    private fun initBottomNavigation() {
+        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
+        val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_erase -> {
+                    sharedViewModel.toggleErase()
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_brush -> {
+                    showDrawColorPicker()
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_undo -> {
+                    sharedViewModel.undo()
+                    canvas.invalidate()
+                    return@OnNavigationItemSelectedListener true
+                }
+
+                R.id.navigation_redo -> {
+                    sharedViewModel.redo()
+                    canvas.invalidate()
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_circle -> {
+                    return@OnNavigationItemSelectedListener true
+                }
+            }
+            false
+        }
+        bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
     }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
@@ -123,29 +159,21 @@ class MainActivity : AppCompatActivity() {
 
         fab_clear = findViewById(R.id.fab_clear)
         fab_clear.setOnClickListener {
-            //            sharedViewModel.clear()
             closeFABMenu()
-            showDrawColorPicker()
-
-//            canvas.invalidate()
         }
         fab_erase = findViewById(R.id.fab_erase)
         fab_erase.setOnClickListener {
-            sharedViewModel.toggleErase()
             closeFABMenu()
         }
         fab_undo = findViewById(R.id.fab_undo)
         fab_undo.setOnClickListener {
-            sharedViewModel.undo()
             closeFABMenu()
-            canvas.invalidate()
+
         }
 
         fab_redo = findViewById(R.id.fab_redo)
         fab_redo.setOnClickListener {
-            sharedViewModel.redo()
             closeFABMenu()
-            canvas.invalidate()
         }
     }
 

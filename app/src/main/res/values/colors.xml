@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#DFDFDF</color>
+    <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#999999</color>
 
     <color name="colorFabMenu">#7498FF</color>
@@ -14,5 +14,10 @@
     <color name="background">#FFFFFF</color>
     <color name="drawColor">#000000</color>
 
+    <color name="grey">#999999</color>
+    <color name="darkGrey">#3D3D3D</color>
+
     <color name="blackTransparent80">#8d000000</color>
+
+
 </resources>

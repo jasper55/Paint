@@ -8,4 +8,6 @@
     <dimen name="standard_23">23dp</dimen>
     <dimen name="standard_12">12dp</dimen>
     <dimen name="standard_230">230dp</dimen>
+    <!-- general dimensions for all custom menu items -->
+    <dimen name="menu_item_icon_size">24dp</dimen>
 </resources>
