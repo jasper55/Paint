@@ -3,7 +3,7 @@ package wagner.jasper.paint.model
 import android.graphics.Paint
 
 data class MyPaint(
-    var isEraseOn: Boolean = false,
+    val isEraseOn: Boolean = false,
     val backgroundColor: Int,
     val drawColor: Int,
     val alphaSet: Int,

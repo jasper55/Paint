@@ -19,16 +19,21 @@ import wagner.jasper.paint.ui.SharedViewModel
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.OnColorSelectedListener
 import com.flask.colorpicker.builder.ColorPickerClickListener
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import wagner.jasper.paint.ui.CircleView
 
@@ -57,6 +62,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var applyButton: Button
     private lateinit var sharedViewModel: SharedViewModel
 
+    private lateinit var erase: View
+    private lateinit var brush: View
+    private lateinit var undo: View
+    private lateinit var redo: View
+    private var activeColor: Int = 0
+    private var inactiveColor: Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,37 +83,56 @@ class MainActivity : AppCompatActivity() {
         initStrokeSeekbars()
         initCircleView()
         initApplyButton()
+        initMenuItems()
     }
+
+    private fun initMenuItems() {
+        erase = findViewById(R.id.navigation_erase)
+        brush = findViewById(R.id.navigation_brush)
+        undo = findViewById(R.id.navigation_undo)
+        redo = findViewById(R.id.navigation_redo)
+        activeColor = resources.getColor(R.color.darkGrey)
+        inactiveColor = resources.getColor(R.color.grey)
+    }
+
 
     private fun initBottomNavigation() {
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
-        val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_erase -> {
-                    sharedViewModel.toggleErase()
-                    return@OnNavigationItemSelectedListener true
-                }
-                R.id.navigation_brush -> {
-                    showDrawColorPicker()
-                    return@OnNavigationItemSelectedListener true
-                }
-                R.id.navigation_undo -> {
-                    sharedViewModel.undo()
-                    canvas.invalidate()
-                    return@OnNavigationItemSelectedListener true
-                }
+        val navigationItemSelectedListener =
+            BottomNavigationView.OnNavigationItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.navigation_erase -> {
 
-                R.id.navigation_redo -> {
-                    sharedViewModel.redo()
-                    canvas.invalidate()
-                    return@OnNavigationItemSelectedListener true
+                        sharedViewModel.toggleErase()
+                        if (sharedViewModel.currentPaint.value!!.isEraseOn) {
+//                            item.setIcon(setActivtedTint(this, R.drawable.ic_erase_black))
+                            tintMenuIcon(this,item,R.color.darkGrey)
+                        } else {
+                            item.icon = setInactiveTint(this, R.drawable.ic_erase_black)
+                        }
+                        return@OnNavigationItemSelectedListener true
+                    }
+                    R.id.navigation_brush -> {
+                        showDrawColorPicker()
+                        return@OnNavigationItemSelectedListener true
+                    }
+                    R.id.navigation_undo -> {
+                        sharedViewModel.undo()
+                        canvas.invalidate()
+                        return@OnNavigationItemSelectedListener true
+                    }
+
+                    R.id.navigation_redo -> {
+                        sharedViewModel.redo()
+                        canvas.invalidate()
+                        return@OnNavigationItemSelectedListener true
+                    }
+                    R.id.navigation_circle -> {
+                        return@OnNavigationItemSelectedListener true
+                    }
                 }
-                R.id.navigation_circle -> {
-                    return@OnNavigationItemSelectedListener true
-                }
+                false
             }
-            false
-        }
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
     }
 
@@ -295,6 +326,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
                 sharedViewModel.setStrokeWidth(width.toFloat())
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
@@ -306,12 +338,13 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
                 sharedViewModel.setAlpha(width)
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
 
-    private fun showApplyButton(){
+    private fun showApplyButton() {
         applyButton.visibility = View.VISIBLE
         applyButton.setOnClickListener {
             applyPaintChanges()
@@ -326,4 +359,25 @@ class MainActivity : AppCompatActivity() {
         canvas.visibility = View.VISIBLE
     }
 
+    private fun setActivtedTint(context: Context, iconSource: Int): Drawable {
+        val unwrappedDrawable: Drawable = AppCompatResources.getDrawable(context, iconSource)!!
+        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+        DrawableCompat.setTint(wrappedDrawable, resources.getColor(R.color.darkGrey))
+        return wrappedDrawable
+    }
+
+    private fun setInactiveTint(context: Context, iconSource: Int): Drawable {
+        val unwrappedDrawable: Drawable = AppCompatResources.getDrawable(context, iconSource)!!
+        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
+        DrawableCompat.setTint(wrappedDrawable, resources.getColor(R.color.grey))
+        return wrappedDrawable
+    }
+
+    fun tintMenuIcon(context: Context, item: MenuItem, @ColorRes color: Int) {
+        val normalDrawable = item.getIcon()
+        val wrapDrawable = DrawableCompat.wrap(normalDrawable);
+        DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
+
+        item.setIcon(wrapDrawable);
+    }
 }

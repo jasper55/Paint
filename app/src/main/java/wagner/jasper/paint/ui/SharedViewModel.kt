@@ -15,8 +15,8 @@ import kotlin.math.abs
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 
     private var isEraseOn = MutableLiveData<Boolean>(false)
-    
-    private val _pathList = MutableLiveData<LinkedHashMap<Path, MyPaint>>()
+
+    private val _pathList:MutableLiveData<LinkedHashMap<Path, MyPaint>> by lazy {   MutableLiveData<LinkedHashMap<Path, MyPaint>>() }
     val pathList: LiveData<LinkedHashMap<Path, MyPaint>>
         get() = _pathList
 
@@ -113,27 +113,19 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun undo() {
-        if (_pathList.value!!.isNotEmpty()) {
-
-            val key = _pathList.value!!.keys.last()
-            val value = _pathList.value!!.values.last()
-            _undoPathList.value!!.put(key, value)
-            _pathList.value!!.remove(key)
-            _path.value!!.clear()
-
-            _path.value = _pathList.value!!.clone() as LinkedHashMap<Path, MyPaint>
-            _currentPath.value!!.reset()
-        } else {
-            return
-        }
+        removeAdd(pathList.value!!,_undoPathList.value!!)
     }
 
     fun redo() {
-        if (_undoPathList.value!!.isNotEmpty()) {
-            val key = _undoPathList.value!!.keys.last()
-            val value = _undoPathList.value!!.values.last()
-            _undoPathList.value!!.remove(key)
-            _pathList.value!!.put(key, value)
+        removeAdd(_undoPathList.value!!,pathList.value!!)
+    }
+
+    private fun removeAdd(listToRemove: LinkedHashMap<Path,MyPaint>,listToAdd: LinkedHashMap<Path,MyPaint>) {
+        if (listToRemove.isNotEmpty()) {
+            val key = listToRemove.keys.last()
+            val value = listToRemove.values.last()
+            listToRemove.remove(key)
+            listToAdd.put(key, value)
             _path.value!!.clear()
 
             _path.value = _pathList.value!!.clone() as LinkedHashMap<Path, MyPaint>
@@ -165,7 +157,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     fun toggleErase() {
         val previousEraseSetting = isEraseOn.value!!
         _currentPaint.value!!.apply {
-            isEraseOn = !previousEraseSetting
+            _currentPaint.value!!.copy(
+            isEraseOn = !previousEraseSetting)
             color = if (previousEraseSetting == false) _backgroundColor.value!!
             else _drawColor.value!!
         }
