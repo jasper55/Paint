@@ -11,6 +11,17 @@ import androidx.lifecycle.MutableLiveData
 import wagner.jasper.paint.R
 import wagner.jasper.paint.model.MyPaint
 import kotlin.math.abs
+import android.os.Environment
+import java.io.File
+import android.graphics.Bitmap.CompressFormat
+import java.io.FileOutputStream
+import android.graphics.Bitmap
+import java.io.BufferedOutputStream
+import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
+import java.io.ByteArrayOutputStream
+
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -39,6 +50,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     private val _drawColor = MutableLiveData<Int>()
     val drawColor: LiveData<Int>
         get() = _drawColor
+
+    private lateinit var file: File
 
     private var motionTouchEventX = 0F
     private var motionTouchEventY = 0F
@@ -202,6 +215,42 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun cleanPath() {
         cleanPath()
+    }
+
+    fun saveOnDevice(){
+//        val myDir2 = File("/sdcard/saved_images")
+//        myDir.mkdirs()
+//        val fname = "InstaImage.jpg"
+//        file = File(myDir, fname)
+//        if (file.exists()) file.delete()
+    }
+
+    fun saveAsJpg(bitmap: Bitmap): Bitmap {
+//        val file = File("path")
+//
+//        val fname = f.absolutePath
+//        var fos: FileOutputStream? = null
+//        try {
+//            fos = FileOutputStream(f)
+//            mBitmap.compress(CompressFormat.JPEG, 95, fos)
+//        } catch (ex: Throwable) {
+//            ex.printStackTrace()
+//        }
+
+
+
+        val myDir = File(Environment.getExternalStorageState())
+        val os = BufferedOutputStream(FileOutputStream(myDir))
+        bitmap.compress(CompressFormat.JPEG, 100, os)
+        os.close()
+        return bitmap
+    }
+
+    fun getImageUri(inContext: Context, inImage: Bitmap): String {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(CompressFormat.JPEG, 100, bytes)
+        return MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "picture_to_share", null)
+//        return Uri.parse(path)
     }
 
 }

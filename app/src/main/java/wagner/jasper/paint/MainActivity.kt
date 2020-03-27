@@ -2,6 +2,7 @@ package wagner.jasper.paint
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
@@ -17,15 +18,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 import wagner.jasper.paint.ui.CustomCanvasView
 import wagner.jasper.paint.ui.SharedViewModel
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.OnColorSelectedListener
 import com.flask.colorpicker.builder.ColorPickerClickListener
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
+import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.Button
 import androidx.annotation.ColorRes
@@ -35,6 +39,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.internal.ContextUtils.getActivity
 import wagner.jasper.paint.ui.CircleView
 
 
@@ -88,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                         sharedViewModel.toggleErase()
                         if (sharedViewModel.currentPaint.value!!.isEraseOn) {
 //                            item.setIcon(setActivtedTint(this, R.drawable.ic_erase_black))
-                            tintMenuIcon(this,item,R.color.darkGrey)
+                            tintMenuIcon(this, item, R.color.darkGrey)
                         } else {
                             item.icon = setInactiveTint(this, R.drawable.ic_erase_black)
                         }
@@ -182,6 +187,8 @@ class MainActivity : AppCompatActivity() {
 
         fab_share = findViewById(R.id.fab_share)
         fab_share.setOnClickListener {
+            sharedViewModel
+            shareOnInstagram()
             closeFABMenu()
         }
     }
@@ -304,6 +311,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
                 sharedViewModel.setStrokeWidth(width.toFloat())
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
@@ -359,6 +367,18 @@ class MainActivity : AppCompatActivity() {
         val wrapDrawable = DrawableCompat.wrap(normalDrawable);
         DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
 
-        item.setIcon(wrapDrawable);
+        item.setIcon(wrapDrawable)
+    }
+
+    private fun shareOnInstagram() {
+        val bitmap = canvas.getBitmap()
+        val uri = sharedViewModel.getImageUri(this, bitmap)
+        val sharingIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM,uri)
+            type = "image/*"
+        }
+        startActivity(Intent.createChooser(sharingIntent, "Share via"))
     }
 }
+

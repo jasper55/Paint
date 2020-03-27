@@ -82,4 +82,8 @@ class CustomCanvasView @JvmOverloads constructor(
         invalidate()
         return true
     }
+
+    fun getBitmap(): Bitmap {
+        return extraBitmap
+    }
 }
