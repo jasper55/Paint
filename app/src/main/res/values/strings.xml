@@ -5,4 +5,6 @@
     <string name="label_undo">undo</string>
     <string name="label_clear">clear</string>
     <string name="label_redo">redo</string>
+    <string name="label_share">share</string>
+    <string name="label_save">save</string>
 </resources>

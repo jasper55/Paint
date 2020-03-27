@@ -20,7 +20,7 @@ class CustomCanvasView @JvmOverloads constructor(
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
-//    private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
+    //    private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
 //    private val backgroundColor = ResourcesCompat.getColor(resources, R.color.background, null)
     // the drawing will be interpolated and not drawn for every pixel
     // the sensibility of the distance between two points is set here
@@ -45,7 +45,7 @@ class CustomCanvasView @JvmOverloads constructor(
         }
         // Draw any current squiggle
         sharedViewModel.currentPath.value?.let {
-            canvas.drawPath(it,sharedViewModel.currentPaint.value!!)
+            canvas.drawPath(it, sharedViewModel.currentPaint.value!!)
         }
     }
 
@@ -70,20 +70,16 @@ class CustomCanvasView @JvmOverloads constructor(
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> sharedViewModel.touchStart()
-            MotionEvent.ACTION_MOVE -> touchMove()
-            MotionEvent.ACTION_UP -> {
-                sharedViewModel.touchUp()
-                Toast.makeText(activity, "screen touched", Toast.LENGTH_SHORT).show()
+            MotionEvent.ACTION_MOVE -> if (sharedViewModel.isTouchEventWithinTolerance(
+                    touchTolerance
+                )
+            ) {
+                sharedViewModel.touchMove()
             }
+            MotionEvent.ACTION_UP -> sharedViewModel.touchUp()
+
         }
         invalidate()
         return true
     }
-
-    private fun touchMove() {
-        if (sharedViewModel.isTouchEventWithinTolerance(touchTolerance)) {
-            sharedViewModel.touchMove()
-        }
-    }
-
 }

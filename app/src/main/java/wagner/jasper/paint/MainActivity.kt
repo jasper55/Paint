@@ -33,6 +33,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.children
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import wagner.jasper.paint.ui.CircleView
 
@@ -51,7 +52,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fabOverlay: View
 
     private lateinit var canvas: CustomCanvasView
-    private lateinit var toolbar: ActionBar
+    private lateinit var linearLayoutAlpha: LinearLayout
+    private lateinit var linearLayoutStroke: LinearLayout
     private lateinit var colorPicker: AlertDialog
     private lateinit var circleView: CircleView
     private lateinit var strokeWidthSeekbar: SeekBar
@@ -66,16 +68,18 @@ class MainActivity : AppCompatActivity() {
 
         // link to inflated view in xml -- neccessary for undo/redo
         canvas = custom_canvas_view
+        initCircleView()
         initBottomNavigation()
         instantiateFABMenu()
         initColorPicker()
         initStrokeSeekbars()
-        initCircleView()
         initApplyButton()
     }
 
     private fun initBottomNavigation() {
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
+        val menuItem = bottomNavigation.menu.getItem(4)
+        menuItem.actionView = circleView
         val navigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 when (item.itemId) {
@@ -167,6 +171,7 @@ class MainActivity : AppCompatActivity() {
 
         fab_clear = findViewById(R.id.fab_clear)
         fab_clear.setOnClickListener {
+            sharedViewModel.clear()
             closeFABMenu()
         }
         fab_save = findViewById(R.id.fab_save)
@@ -253,7 +258,7 @@ class MainActivity : AppCompatActivity() {
         colorPicker =
             ColorPickerDialogBuilder
                 .with(this)
-                .setTitle("Choose color")
+                .setTitle("Choose a color")
                 .initialColor(sharedViewModel.currentPaint.value?.drawColor ?: Color.BLUE)
                 .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
                 .showAlphaSlider(false)
@@ -280,7 +285,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initStrokeSeekbars() {
+        linearLayoutAlpha = findViewById(R.id.color_alpha_seek_bar_container)
+        linearLayoutStroke = findViewById(R.id.stroke_width_seek_bar_container)
         colorAlphaSeekbar = findViewById(R.id.color_alpha_seek_bar)
+        colorAlphaSeekbar.progress = 100
         strokeWidthSeekbar = findViewById(R.id.stroke_width_seek_bar)
 
         colorAlphaSeekbar.progressDrawable.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
@@ -296,13 +304,14 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
                 sharedViewModel.setStrokeWidth(width.toFloat())
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
 
     private fun showColorAlphaSeekbar() {
+        linearLayoutAlpha.visibility = View.VISIBLE
+        linearLayoutStroke.visibility = View.VISIBLE
         colorAlphaSeekbar.visibility = View.VISIBLE
         colorAlphaSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
@@ -323,8 +332,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun applyPaintChanges() {
         strokeWidthSeekbar.visibility = View.GONE
+        linearLayoutStroke.visibility = View.GONE
+        linearLayoutAlpha.visibility = View.GONE
         colorAlphaSeekbar.visibility = View.GONE
-        circleView.visibility = View.GONE
+//        circleView.visibility = View.GONE
         applyButton.visibility = View.GONE
         canvas.visibility = View.VISIBLE
     }
