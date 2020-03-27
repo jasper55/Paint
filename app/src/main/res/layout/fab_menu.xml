@@ -13,46 +13,12 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/fab_container_clear"
+        android:id="@+id/fab_container_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/standard_23"
-        android:layout_marginBottom="@dimen/standard_23"
-        android:clipToPadding="false"
-        android:gravity="center_vertical"
-        android:padding="@dimen/standard_12"
-        android:visibility="gone"
-        app:layout_behavior="wagner.jasper.paint.ui.MoveUpwardBehavior">
-        <!--    if you are not using Snackbar with this activity then remove below line from every place of the file:
-            app:layout_behavior="com.ajaysinghdewari.floatingactionbuttonmenu.activities.utils.MoveUpwardBehavior"
-            the above line enables the view to Scrolls up with the snackbar as, the FAB do automaticaly scrolls up
-            when the snackbar appear, so if snackbar is not used please remove the above line from every view present in the xml-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_clear" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            app:backgroundTint="@color/colorFabThree"
-            app:borderWidth="0dp"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_clear_black" />
-    </LinearLayout>
-
-
-
-    <LinearLayout
-        android:id="@+id/fab_container_redo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/standard_23"
-        android:layout_marginBottom="@dimen/standard_23"
+        android:layout_marginRight="@dimen/standard_12"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:padding="@dimen/standard_12"
@@ -65,24 +31,24 @@
             android:text="@string/label_redo" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_redo"
+            android:id="@+id/fab_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            app:backgroundTint="@color/colorFabFour"
+            app:backgroundTint="@color/colorFabThree"
             app:borderWidth="0dp"
             app:fabSize="mini"
-            app:srcCompat="@drawable/ic_redo_black" />
+            app:srcCompat="@drawable/ic_share_black" />
     </LinearLayout>
 
 
     <LinearLayout
-        android:id="@+id/fab_container_undo"
+        android:id="@+id/fab_container_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/standard_23"
-        android:layout_marginBottom="@dimen/standard_23"
+        android:layout_marginRight="@dimen/standard_12"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:padding="@dimen/standard_12"
@@ -95,24 +61,24 @@
             android:text="@string/label_undo" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_undo"
+            android:id="@+id/fab_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             app:backgroundTint="@color/colorFabTwo"
             app:borderWidth="0dp"
             app:fabSize="mini"
-            app:srcCompat="@drawable/ic_undo_black" />
+            app:srcCompat="@drawable/ic_save_black" />
     </LinearLayout>
 
 
     <LinearLayout
-        android:id="@+id/fab_container_erase"
+        android:id="@+id/fab_container_clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/standard_23"
-        android:layout_marginBottom="@dimen/standard_23"
+        android:layout_marginRight="@dimen/standard_12"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:padding="@dimen/standard_12"
@@ -125,14 +91,14 @@
             android:text="@string/label_erase" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_erase"
+            android:id="@+id/fab_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             app:backgroundTint="@color/colorFabOne"
             app:borderWidth="0dp"
             app:fabSize="mini"
-            app:srcCompat="@drawable/ic_erase_black" />
+            app:srcCompat="@drawable/ic_clear_black" />
     </LinearLayout>
 
 
@@ -140,8 +106,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin_right"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:clipToPadding="false"
         android:gravity="center_vertical"
         android:padding="@dimen/standard_12"
@@ -155,7 +121,7 @@
             android:layout_gravity="bottom|end"
             android:gravity="center_vertical"
             app:elevation="100dp"
-            app:backgroundTint="@color/colorFabMenu"
+            app:backgroundTint="@color/grey"
             app:borderWidth="0dp"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_menu2_black" />

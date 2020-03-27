@@ -16,7 +16,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private var isEraseOn = MutableLiveData<Boolean>(false)
 
-    private val _pathList:MutableLiveData<LinkedHashMap<Path, MyPaint>> by lazy {   MutableLiveData<LinkedHashMap<Path, MyPaint>>() }
+    private val _pathList: MutableLiveData<LinkedHashMap<Path, MyPaint>> by lazy { MutableLiveData<LinkedHashMap<Path, MyPaint>>() }
     val pathList: LiveData<LinkedHashMap<Path, MyPaint>>
         get() = _pathList
 
@@ -30,7 +30,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _strokeWidth = MutableLiveData<Float>(12f)
     val strokeWidth: LiveData<Float>
-    get() = _strokeWidth
+        get() = _strokeWidth
 
     private val _colorAlpha = MutableLiveData<Int>(255)
     val colorAlpha: LiveData<Int>
@@ -113,14 +113,23 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun undo() {
-        removeAdd(pathList.value!!,_undoPathList.value!!)
+        removeAdd(
+            listToRemove = pathList.value!!,
+            listToAdd = _undoPathList.value!!
+        )
     }
 
     fun redo() {
-        removeAdd(_undoPathList.value!!,pathList.value!!)
+        removeAdd(
+            listToRemove = _undoPathList.value!!,
+            listToAdd = pathList.value!!
+        )
     }
 
-    private fun removeAdd(listToRemove: LinkedHashMap<Path,MyPaint>,listToAdd: LinkedHashMap<Path,MyPaint>) {
+    private fun removeAdd(
+        listToRemove: LinkedHashMap<Path, MyPaint>,
+        listToAdd: LinkedHashMap<Path, MyPaint>
+    ) {
         if (listToRemove.isNotEmpty()) {
             val key = listToRemove.keys.last()
             val value = listToRemove.values.last()
@@ -158,7 +167,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         val previousEraseSetting = isEraseOn.value!!
         _currentPaint.value!!.apply {
             _currentPaint.value!!.copy(
-            isEraseOn = !previousEraseSetting)
+                isEraseOn = !previousEraseSetting
+            )
             color = if (previousEraseSetting == false) _backgroundColor.value!!
             else _drawColor.value!!
         }

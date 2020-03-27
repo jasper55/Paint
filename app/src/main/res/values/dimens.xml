@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin_right">4dp</dimen>
+    <dimen name="fab_margin_bottom">60dp</dimen>
 
     <dimen name="standard_175">175dp</dimen>
     <dimen name="standard_120">120dp</dimen>
