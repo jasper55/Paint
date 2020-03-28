@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
     <dimen name="fab_margin_right">4dp</dimen>
     <dimen name="fab_margin_bottom">60dp</dimen>
 
-    <dimen name="standard_175">175dp</dimen>
-    <dimen name="standard_120">120dp</dimen>
-    <dimen name="standard_65">65dp</dimen>
+    <dimen name="standard_235">235dp</dimen>
+    <dimen name="standard_180">180dp</dimen>
+    <dimen name="standard_125">125dp</dimen>
+    <dimen name="standard_70">70dp</dimen>
+
     <dimen name="standard_23">23dp</dimen>
     <dimen name="standard_12">12dp</dimen>
-    <dimen name="standard_230">230dp</dimen>
+
     <!-- general dimensions for all custom menu items -->
     <dimen name="menu_item_icon_size">24dp</dimen>
+
+    <dimen name="padding_label_5">5dp</dimen>
+    <dimen name="padding_label_2">2dp</dimen>
 </resources>

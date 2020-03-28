@@ -2,7 +2,6 @@ package wagner.jasper.paint
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
@@ -19,28 +18,23 @@ import wagner.jasper.paint.ui.CustomCanvasView
 import wagner.jasper.paint.ui.SharedViewModel
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.OnColorSelectedListener
 import com.flask.colorpicker.builder.ColorPickerClickListener
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
-import android.provider.MediaStore
 import android.view.MenuItem
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
-import androidx.annotation.ColorRes
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.children
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.internal.ContextUtils.getActivity
 import wagner.jasper.paint.ui.CircleView
+import wagner.jasper.paint.util.BounceInterpolator
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,6 +44,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fab_save: FloatingActionButton
     private lateinit var fab_share: FloatingActionButton
     private lateinit var fab_menu: FloatingActionButton
+
+    private lateinit var bounceAnimation: Animation
 
     private lateinit var fab_container_clear: LinearLayout
     private lateinit var fab_container_save: LinearLayout
@@ -79,23 +75,23 @@ class MainActivity : AppCompatActivity() {
         initColorPicker()
         initStrokeSeekbars()
         initApplyButton()
+        initBounceAnimator()
     }
 
     private fun initBottomNavigation() {
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
         val menuItem = bottomNavigation.menu.getItem(4)
+        val eraseItem = bottomNavigation.menu.getItem(0)
         menuItem.actionView = circleView
         val navigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_erase -> {
-
                         sharedViewModel.toggleErase()
                         if (sharedViewModel.currentPaint.value!!.isEraseOn) {
-//                            item.setIcon(setActivtedTint(this, R.drawable.ic_erase_black))
-                            tintMenuIcon(this, item, R.color.darkGrey)
+                            tintMenuIcon(eraseItem, R.color.darkGrey)
                         } else {
-                            item.icon = setInactiveTint(this, R.drawable.ic_erase_black)
+                            tintMenuIcon(eraseItem, R.color.grey)
                         }
                         return@OnNavigationItemSelectedListener true
                     }
@@ -165,6 +161,11 @@ class MainActivity : AppCompatActivity() {
         fab_menu = findViewById(R.id.fab_menu)
         fab_menu.setOnClickListener {
             if (!isFABOpen) {
+                fab_menu.startAnimation(bounceAnimation)
+                fab_clear.startAnimation(bounceAnimation)
+                fab_save.startAnimation(bounceAnimation)
+                fab_share.startAnimation(bounceAnimation)
+
                 showFABMenu()
             } else {
                 closeFABMenu()
@@ -177,6 +178,7 @@ class MainActivity : AppCompatActivity() {
         fab_clear = findViewById(R.id.fab_clear)
         fab_clear.setOnClickListener {
             sharedViewModel.clear()
+            canvas.invalidate()
             closeFABMenu()
         }
         fab_save = findViewById(R.id.fab_save)
@@ -187,10 +189,16 @@ class MainActivity : AppCompatActivity() {
 
         fab_share = findViewById(R.id.fab_share)
         fab_share.setOnClickListener {
-            sharedViewModel
             shareOnInstagram()
             closeFABMenu()
         }
+    }
+
+    private fun initBounceAnimator(): Animation {
+        bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
+        val interpolator = BounceInterpolator(0.2, 20.0)
+        bounceAnimation.interpolator = interpolator
+        return bounceAnimation
     }
 
     private fun initApplyButton() {
@@ -210,6 +218,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_save.visibility = CoordinatorLayout.VISIBLE
         fab_container_share.visibility = CoordinatorLayout.VISIBLE
         fabOverlay.visibility = CoordinatorLayout.VISIBLE
+        fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.white))
         fab_menu.animate().rotationBy(270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
@@ -217,14 +226,12 @@ class MainActivity : AppCompatActivity() {
                 override fun onAnimationCancel(animator: Animator) {}
                 override fun onAnimationRepeat(animator: Animator) {}
             })
-//        fab_container_share.animate()
-//            .translationY(-resources.getDimension(R.dimen.standard_230))
         fab_container_share.animate()
-            .translationY(-resources.getDimension(R.dimen.standard_175))
+            .translationY(-resources.getDimension(R.dimen.standard_180))
         fab_container_save.animate()
-            .translationY(-resources.getDimension(R.dimen.standard_120))
+            .translationY(-resources.getDimension(R.dimen.standard_125))
         fab_container_clear.animate()
-            .translationY(-resources.getDimension(R.dimen.standard_65))
+            .translationY(-resources.getDimension(R.dimen.standard_70))
     }
 
     @SuppressLint("RestrictedApi")
@@ -235,6 +242,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear.animate().translationY(0F)
         fab_container_save.animate().translationY(0F)
         fab_container_share.animate().translationY(0F)
+        fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.grey))
         fab_menu.animate().rotationBy(-270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
@@ -348,37 +356,26 @@ class MainActivity : AppCompatActivity() {
         canvas.visibility = View.VISIBLE
     }
 
-    private fun setActivtedTint(context: Context, iconSource: Int): Drawable {
-        val unwrappedDrawable: Drawable = AppCompatResources.getDrawable(context, iconSource)!!
-        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
-        DrawableCompat.setTint(wrappedDrawable, resources.getColor(R.color.darkGrey))
-        return wrappedDrawable
+
+    private fun tintMenuIcon(item: MenuItem, color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            item.icon.setTintList(ColorStateList.valueOf(resources.getColor(color)))
+            item.icon.setTint(resources.getColor(color))
+        }
     }
 
-    private fun setInactiveTint(context: Context, iconSource: Int): Drawable {
-        val unwrappedDrawable: Drawable = AppCompatResources.getDrawable(context, iconSource)!!
-        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable)
-        DrawableCompat.setTint(wrappedDrawable, resources.getColor(R.color.grey))
-        return wrappedDrawable
-    }
-
-    fun tintMenuIcon(context: Context, item: MenuItem, @ColorRes color: Int) {
-        val normalDrawable = item.getIcon()
-        val wrapDrawable = DrawableCompat.wrap(normalDrawable);
-        DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
-
-        item.setIcon(wrapDrawable)
-    }
 
     private fun shareOnInstagram() {
         val bitmap = canvas.getBitmap()
         val uri = sharedViewModel.getImageUri(this, bitmap)
         val sharingIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM,uri)
+            putExtra(Intent.EXTRA_STREAM, uri)
             type = "image/*"
         }
         startActivity(Intent.createChooser(sharingIntent, "Share via"))
     }
+
+
 }
 

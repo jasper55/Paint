@@ -17,7 +17,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <!--            android:layout_gravity="bottom|end"-->
     <wagner.jasper.paint.ui.CircleView
         android:id="@+id/circle_view"
         android:layout_width="36dp"

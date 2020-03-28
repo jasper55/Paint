@@ -246,11 +246,11 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         return bitmap
     }
 
-    fun getImageUri(inContext: Context, inImage: Bitmap): String {
+    fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
         val bytes = ByteArrayOutputStream()
         inImage.compress(CompressFormat.JPEG, 100, bytes)
-        return MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "picture_to_share", null)
-//        return Uri.parse(path)
+        val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "picture_to_share", null)
+        return Uri.parse(path)
     }
 
 }
