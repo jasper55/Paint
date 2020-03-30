@@ -22,7 +22,7 @@ class CustomCanvasView @JvmOverloads constructor(
     private lateinit var extraCanvas: Canvas
     private lateinit var latestCanvas: Canvas
     private lateinit var emptyBitmap: Bitmap
-    private lateinit var extraBitmap: Bitmap
+    lateinit var extraBitmap: Bitmap
     // the drawing will be interpolated and not drawn for every pixel
     // the sensibility of the distance between two points is set here
     private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
@@ -44,7 +44,6 @@ class CustomCanvasView @JvmOverloads constructor(
         sharedViewModel.currentPath.value?.let {
             canvas.drawPath(it, sharedViewModel.currentPaint.value!!)
         }
-        latestCanvas = canvas
     }
 
     fun initCanvas() {
@@ -62,7 +61,6 @@ class CustomCanvasView @JvmOverloads constructor(
     // onSizeChanged is for initilalizing nothing visible happens here
     override fun onSizeChanged(width: Int, height: Int, oldwidth: Int, oldheight: Int) {
         super.onSizeChanged(width, height, oldwidth, oldheight)
-        emptyBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     }
 
 
@@ -97,5 +95,9 @@ class CustomCanvasView @JvmOverloads constructor(
 
     fun getCanvas(): Canvas {
         return extraCanvas
+    }
+
+    fun updateBitmap(blurredView: Bitmap) {
+
     }
 }

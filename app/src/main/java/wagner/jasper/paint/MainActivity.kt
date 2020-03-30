@@ -36,13 +36,15 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import jp.wasabeef.blurry.Blurry
 import wagner.jasper.paint.ui.CircleView
+import wagner.jasper.paint.util.BlurBuilder
 import wagner.jasper.paint.util.BounceInterpolator
 
-
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 class MainActivity : AppCompatActivity() {
 
     private var isFABOpen = false
@@ -202,33 +204,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createAndShowBlurOfCanvas() {
-        val view = CustomCanvasView(this,canvas.attributeSet)
-        view.draw(canvas.getCanvas())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//            fabOverlay.background = view.background
-            fabOverlay.setBackgroundDrawable(BitmapDrawable(resources, canvas.getBitmap()))
-
-            blurBackground(fabOverlay)
-        }
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//            val bitmap = canvas.getBitmap()
-//            val canvas = canvas.getCanvas()
-//            val drawable = BitmapDrawable(resources, canvas.getBitmap())
-//            fabOverlay.background = drawable
-//            blurBackground(fabOverlay)
-//        }
-    }
-
-    private fun removeBlurOfCanvas() {
-        val int = resources.getColor(R.color.blackTransparent80)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            fabOverlay.background = ColorDrawable(int)
-        }
-
-    }
-
     private fun initBounceAnimator(): Animation {
         bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
         val interpolator = BounceInterpolator(0.2, 20.0)
@@ -245,15 +220,15 @@ class MainActivity : AppCompatActivity() {
         Log.i("SharedViewModel", "${circleView.radius}, ${circleView}")
     }
 
-    @SuppressLint("RestrictedApi")
+
     private fun showFABMenu() {
         isFABOpen = true
-        createAndShowBlurOfCanvas()
+        createOverlayFromCanvas()
 //        saveImageAndShare()
         fab_container_clear.visibility = CoordinatorLayout.VISIBLE
         fab_container_save.visibility = CoordinatorLayout.VISIBLE
         fab_container_share.visibility = CoordinatorLayout.VISIBLE
-        fabOverlay.visibility = CoordinatorLayout.VISIBLE
+        fabOverlay.visibility = View.VISIBLE
         fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.white))
         fab_menu.animate().rotationBy(270F)
             .setListener(object : Animator.AnimatorListener {
@@ -392,7 +367,6 @@ class MainActivity : AppCompatActivity() {
         linearLayoutStroke.visibility = View.GONE
         linearLayoutAlpha.visibility = View.GONE
         colorAlphaSeekbar.visibility = View.GONE
-//        circleView.visibility = View.GONE
         applyButton.visibility = View.GONE
         canvas.visibility = View.VISIBLE
     }
@@ -407,9 +381,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun shareOnInstagram(imageData: Bitmap) {
-//        val bitmap = Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
-//        val bitmap = canvas.getBitmap()
-
         val uri = sharedViewModel.getImageUri(this, imageData)
         val sharingIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -420,7 +391,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun blurBackground(view: View) {
+    private fun blurBackground(view: ViewGroup) {
 //        val requestOptions = RequestOptions()
 //        requestOptions.transform(BlurTransformation(50)) // 0-100
 //        Glide.with(applicationContext).setDefaultRequestOptions(requestOptions)
@@ -432,8 +403,8 @@ class MainActivity : AppCompatActivity() {
             .sampling(8)
 //            .color(Color.argb(66, 255, 255, 0))
             .async()
-            .capture(view)
-//            .onto(canvas.parent as ViewGroup)
+//            .capture(view)
+            .onto(view)
 
 //        Blurry.with(this)
 ////            .capture(findViewById(R.id.custom_canvas_view))
@@ -451,26 +422,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun getBitmap(): Bitmap {
-        return canvas.getBitmap()
+    private fun removeBlurOfCanvas() {
+        val int = resources.getColor(R.color.blackTransparent80)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            fabOverlay.background = ColorDrawable(int)
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private fun createOverlayFromCanvas() {
+        val view = CustomCanvasView(this,canvas.attributeSet)
+        val imageData = Bitmap.createBitmap(canvas.getBitmap())
+        val blurredBitmap = BlurBuilder.blur(this,imageData)
+        val drawable = BitmapDrawable(blurredBitmap)
+        fabOverlay.setImageDrawable(drawable)
+//        fabOverlay.setImageBitmap(blurredView)
+//        canvas.updateBitmap(blurredView)
+//        canvas.drawBitmap(myBitmap, 0, 0, null)
+        view.draw(canvas.getCanvas())
     }
 
     private fun saveImageAndShare(share: Boolean): Boolean {
-        // get path to external storage (SD card)
-//       val imageData = Bitmap.createBitmap(canvas.getBitmap(),canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
-
-        val view = CustomCanvasView(this,canvas.attributeSet)
-//        view.draw()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            fabOverlay.draw(canvas.getCanvas())
-//            blurBackground(fabOverlay)
-        }
-
-        val imageData = Bitmap.createBitmap(canvas.getBitmap())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            fabOverlay.background = BitmapDrawable(resources, imageData)
-        }
-
+        val imageData = Bitmap.createBitmap(BlurBuilder.blur(this,canvas.getBitmap()))
         if (share) shareOnInstagram(imageData)
 //        val filename = "Paint_drawing"
 //        val sdIconStorageDir = File(
