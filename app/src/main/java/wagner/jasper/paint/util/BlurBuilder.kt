@@ -11,8 +11,8 @@ import androidx.annotation.RequiresApi
 
 
 object BlurBuilder {
-    private val BITMAP_SCALE = 0.4f
-    private val BLUR_RADIUS = 9.5f
+    private val BITMAP_SCALE = 0.2f
+    private val BLUR_RADIUS = 20f
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun blur(context: Context, image: Bitmap): Bitmap {

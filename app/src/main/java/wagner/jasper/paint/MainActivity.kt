@@ -23,7 +23,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.OnColorSelectedListener
 import com.flask.colorpicker.builder.ColorPickerClickListener
@@ -39,7 +38,6 @@ import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import jp.wasabeef.blurry.Blurry
 import wagner.jasper.paint.ui.CircleView
 import wagner.jasper.paint.util.BlurBuilder
 import wagner.jasper.paint.util.BounceInterpolator
@@ -58,9 +56,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fab_container_clear: LinearLayout
     private lateinit var fab_container_save: LinearLayout
     private lateinit var fab_container_share: LinearLayout
-    private lateinit var fabOverlay: ImageView
-
-    private lateinit var blurredViewGroup: ViewGroup
+    private lateinit var blurredImageOverlay: ImageView
 
     private lateinit var canvas: CustomCanvasView
     private lateinit var linearLayoutAlpha: LinearLayout
@@ -88,20 +84,22 @@ class MainActivity : AppCompatActivity() {
         initBounceAnimator()
     }
 
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        observePathChanges()
+        return super.onCreateView(name, context, attrs)
+    }
+
     private fun initBottomNavigation() {
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
-        val menuItem = bottomNavigation.menu.getItem(4)
-        val eraseItem = bottomNavigation.menu.getItem(0)
-        menuItem.actionView = circleView
         val navigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_erase -> {
                         sharedViewModel.toggleErase()
                         if (sharedViewModel.currentPaint.value!!.isEraseOn) {
-                            tintMenuIcon(eraseItem, R.color.darkGrey)
+//                            tintMenuIcon(eraseItem, R.color.darkGrey)
                         } else {
-                            tintMenuIcon(eraseItem, R.color.grey)
+//                            tintMenuIcon(eraseItem, R.color.grey)
                         }
                         return@OnNavigationItemSelectedListener true
                     }
@@ -129,17 +127,6 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
     }
 
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        observePathChanges()
-        return super.onCreateView(name, context, attrs)
-    }
-
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        sharedViewModel.undo()
-    }
-
     private fun observePathChanges() {
         sharedViewModel.path.observe(this, Observer {
             Log.i("SharedViewModel", "observePathChanges()")
@@ -147,9 +134,7 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.drawColor.observe(this, Observer {
             circleView.setColor(it)
             strokeWidthSeekbar.progressDrawable.setColorFilter(it, PorterDuff.Mode.SRC_IN)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                strokeWidthSeekbar.thumb.setColorFilter(it, PorterDuff.Mode.SRC_IN)
-            }
+            strokeWidthSeekbar.thumb.setColorFilter(it, PorterDuff.Mode.SRC_IN)
 
             Log.i("SharedViewModel", "observeDrawColor()")
         })
@@ -167,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear = findViewById(R.id.fab_container_clear)
         fab_container_save = findViewById(R.id.fab_container_save)
         fab_container_share = findViewById(R.id.fab_container_share)
-        fabOverlay = findViewById(R.id.fabOverlay)
+        blurredImageOverlay = findViewById(R.id.fabOverlay)
         fab_menu = findViewById(R.id.fab_menu)
         fab_menu.setOnClickListener {
             fab_menu.startAnimation(bounceAnimation)
@@ -175,13 +160,12 @@ class MainActivity : AppCompatActivity() {
                 fab_clear.startAnimation(bounceAnimation)
                 fab_save.startAnimation(bounceAnimation)
                 fab_share.startAnimation(bounceAnimation)
-
                 showFABMenu()
             } else {
                 closeFABMenu()
             }
         }
-        fabOverlay.setOnClickListener {
+        blurredImageOverlay.setOnClickListener {
             closeFABMenu()
         }
 
@@ -199,7 +183,7 @@ class MainActivity : AppCompatActivity() {
 
         fab_share = findViewById(R.id.fab_share)
         fab_share.setOnClickListener {
-            saveImageAndShare(true)
+            shareImage()
             closeFABMenu()
         }
     }
@@ -215,20 +199,12 @@ class MainActivity : AppCompatActivity() {
         applyButton = apply_button
     }
 
-    private fun showCircleView() {
-        circleView.visibility = View.VISIBLE
-        Log.i("SharedViewModel", "${circleView.radius}, ${circleView}")
-    }
-
-
     private fun showFABMenu() {
         isFABOpen = true
-        createOverlayFromCanvas()
-//        saveImageAndShare()
+        showBlurredOverlay()
         fab_container_clear.visibility = CoordinatorLayout.VISIBLE
         fab_container_save.visibility = CoordinatorLayout.VISIBLE
         fab_container_share.visibility = CoordinatorLayout.VISIBLE
-        fabOverlay.visibility = View.VISIBLE
         fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.white))
         fab_menu.animate().rotationBy(270F)
             .setListener(object : Animator.AnimatorListener {
@@ -248,8 +224,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("RestrictedApi")
     private fun closeFABMenu() {
         isFABOpen = false
-//        removeBlurOfCanvas()
-        fabOverlay.visibility = CoordinatorLayout.GONE
+        blurredImageOverlay.visibility = ImageView.GONE
         fab_container_clear.animate().translationY(0F)
         fab_container_save.animate().translationY(0F)
         fab_container_share.animate().translationY(0F)
@@ -301,7 +276,7 @@ class MainActivity : AppCompatActivity() {
                         allColors: Array<Int>
                     ) {
                         showColorAlphaSeekbar()
-                        showCircleView()
+//                        showCircleView()
                         showStrokeWidthSeekbar()
                         showApplyButton()
                     }
@@ -323,10 +298,7 @@ class MainActivity : AppCompatActivity() {
         strokeWidthSeekbar = findViewById(R.id.stroke_width_seek_bar)
 
         colorAlphaSeekbar.progressDrawable.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            colorAlphaSeekbar.thumb.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
-        }
+        colorAlphaSeekbar.thumb.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
     }
 
     private fun showStrokeWidthSeekbar() {
@@ -374,13 +346,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun tintMenuIcon(item: MenuItem, color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            item.icon.setTintList(ColorStateList.valueOf(resources.getColor(color)))
             item.icon.setTint(resources.getColor(color))
         }
     }
 
+    private fun showBlurredOverlay() {
+        val oldCanvas = canvas.getCanvas()
+        val view = CustomCanvasView(this, canvas.attributeSet)
+//        val view = CustomView(this,this, canvas.attributeSet)
+        val imageData = Bitmap.createBitmap(canvas.getBitmap())
+        val blurredBitmap = BlurBuilder.blur(this, imageData)
+        val blurredDrawable = BitmapDrawable(blurredBitmap)
+        blurredImageOverlay.setImageDrawable(blurredDrawable)
+        blurredImageOverlay.invalidate()
+        blurredImageOverlay.visibility = ImageView.VISIBLE
+        view.draw(oldCanvas)
+    }
 
-    private fun shareOnInstagram(imageData: Bitmap) {
+    private fun shareImage(): Boolean {
+        val imageData = Bitmap.createBitmap(canvas.getBitmap())
         val uri = sharedViewModel.getImageUri(this, imageData)
         val sharingIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -388,64 +372,6 @@ class MainActivity : AppCompatActivity() {
             type = "image/*"
         }
         startActivity(Intent.createChooser(sharingIntent, "Share via"))
-    }
-
-
-    private fun blurBackground(view: ViewGroup) {
-//        val requestOptions = RequestOptions()
-//        requestOptions.transform(BlurTransformation(50)) // 0-100
-//        Glide.with(applicationContext).setDefaultRequestOptions(requestOptions)
-//            .load(imageUrl).into(view)
-//
-
-        Blurry.with(this)
-            .radius(10)
-            .sampling(8)
-//            .color(Color.argb(66, 255, 255, 0))
-            .async()
-//            .capture(view)
-            .onto(view)
-
-//        Blurry.with(this)
-////            .capture(findViewById(R.id.custom_canvas_view))
-//            .radius(10)
-//            .sampling(8)
-//            .capture(canvas)
-//            .into(canvas.getBitmap())
-
-//        val bitmap = Blur.of(this,canvas.getBitmap(), BlurFactor())
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//            canvas.background = BitmapDrawable(resources, bitmap)
-//            canvas.invalidate()
-//        }
-
-
-    }
-
-    private fun removeBlurOfCanvas() {
-        val int = resources.getColor(R.color.blackTransparent80)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            fabOverlay.background = ColorDrawable(int)
-        }
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private fun createOverlayFromCanvas() {
-        val view = CustomCanvasView(this,canvas.attributeSet)
-        val imageData = Bitmap.createBitmap(canvas.getBitmap())
-        val blurredBitmap = BlurBuilder.blur(this,imageData)
-        val drawable = BitmapDrawable(blurredBitmap)
-        fabOverlay.setImageDrawable(drawable)
-//        fabOverlay.setImageBitmap(blurredView)
-//        canvas.updateBitmap(blurredView)
-//        canvas.drawBitmap(myBitmap, 0, 0, null)
-        view.draw(canvas.getCanvas())
-    }
-
-    private fun saveImageAndShare(share: Boolean): Boolean {
-        val imageData = Bitmap.createBitmap(BlurBuilder.blur(this,canvas.getBitmap()))
-        if (share) shareOnInstagram(imageData)
 //        val filename = "Paint_drawing"
 //        val sdIconStorageDir = File(
 //            Environment.getExternalStorageDirectory()

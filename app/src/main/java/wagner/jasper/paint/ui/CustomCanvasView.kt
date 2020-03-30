@@ -52,8 +52,6 @@ class CustomCanvasView @JvmOverloads constructor(
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
         extraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        emptyBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        latestCanvas = Canvas(emptyBitmap)
         extraCanvas = Canvas(extraBitmap)
         extraCanvas.drawColor(sharedViewModel.backgroundColor.value!!)
     }
