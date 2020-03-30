@@ -19,8 +19,11 @@ import wagner.jasper.paint.ui.SharedViewModel
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.OnColorSelectedListener
 import com.flask.colorpicker.builder.ColorPickerClickListener
@@ -28,11 +31,14 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import jp.wasabeef.blurry.Blurry
 import wagner.jasper.paint.ui.CircleView
 import wagner.jasper.paint.util.BounceInterpolator
 
@@ -50,7 +56,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fab_container_clear: LinearLayout
     private lateinit var fab_container_save: LinearLayout
     private lateinit var fab_container_share: LinearLayout
-    private lateinit var fabOverlay: View
+    private lateinit var fabOverlay: ImageView
+
+    private lateinit var blurredViewGroup: ViewGroup
 
     private lateinit var canvas: CustomCanvasView
     private lateinit var linearLayoutAlpha: LinearLayout
@@ -160,8 +168,8 @@ class MainActivity : AppCompatActivity() {
         fabOverlay = findViewById(R.id.fabOverlay)
         fab_menu = findViewById(R.id.fab_menu)
         fab_menu.setOnClickListener {
+            fab_menu.startAnimation(bounceAnimation)
             if (!isFABOpen) {
-                fab_menu.startAnimation(bounceAnimation)
                 fab_clear.startAnimation(bounceAnimation)
                 fab_save.startAnimation(bounceAnimation)
                 fab_share.startAnimation(bounceAnimation)
@@ -178,20 +186,47 @@ class MainActivity : AppCompatActivity() {
         fab_clear = findViewById(R.id.fab_clear)
         fab_clear.setOnClickListener {
             sharedViewModel.clear()
+            canvas.initCanvas()
             canvas.invalidate()
             closeFABMenu()
         }
         fab_save = findViewById(R.id.fab_save)
         fab_save.setOnClickListener {
             closeFABMenu()
-
         }
 
         fab_share = findViewById(R.id.fab_share)
         fab_share.setOnClickListener {
-            shareOnInstagram()
+            saveImageAndShare(true)
             closeFABMenu()
         }
+    }
+
+    private fun createAndShowBlurOfCanvas() {
+        val view = CustomCanvasView(this,canvas.attributeSet)
+        view.draw(canvas.getCanvas())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            fabOverlay.background = view.background
+            fabOverlay.setBackgroundDrawable(BitmapDrawable(resources, canvas.getBitmap()))
+
+            blurBackground(fabOverlay)
+        }
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            val bitmap = canvas.getBitmap()
+//            val canvas = canvas.getCanvas()
+//            val drawable = BitmapDrawable(resources, canvas.getBitmap())
+//            fabOverlay.background = drawable
+//            blurBackground(fabOverlay)
+//        }
+    }
+
+    private fun removeBlurOfCanvas() {
+        val int = resources.getColor(R.color.blackTransparent80)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            fabOverlay.background = ColorDrawable(int)
+        }
+
     }
 
     private fun initBounceAnimator(): Animation {
@@ -213,7 +248,8 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("RestrictedApi")
     private fun showFABMenu() {
         isFABOpen = true
-        //applyBlurOnBackground();
+        createAndShowBlurOfCanvas()
+//        saveImageAndShare()
         fab_container_clear.visibility = CoordinatorLayout.VISIBLE
         fab_container_save.visibility = CoordinatorLayout.VISIBLE
         fab_container_share.visibility = CoordinatorLayout.VISIBLE
@@ -236,8 +272,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("RestrictedApi")
     private fun closeFABMenu() {
-        //        removeBlurOnBackground();
         isFABOpen = false
+//        removeBlurOfCanvas()
         fabOverlay.visibility = CoordinatorLayout.GONE
         fab_container_clear.animate().translationY(0F)
         fab_container_save.animate().translationY(0F)
@@ -295,7 +331,12 @@ class MainActivity : AppCompatActivity() {
                         showApplyButton()
                     }
                 })
-                .setNegativeButton("cancel") { dialog, which -> }
+                .setNegativeButton("cancel", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        applyPaintChanges()
+                        return
+                    }
+                })
                 .build()
     }
 
@@ -365,15 +406,101 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun shareOnInstagram() {
-        val bitmap = canvas.getBitmap()
-        val uri = sharedViewModel.getImageUri(this, bitmap)
+    private fun shareOnInstagram(imageData: Bitmap) {
+//        val bitmap = Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
+//        val bitmap = canvas.getBitmap()
+
+        val uri = sharedViewModel.getImageUri(this, imageData)
         val sharingIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, uri)
             type = "image/*"
         }
         startActivity(Intent.createChooser(sharingIntent, "Share via"))
+    }
+
+
+    private fun blurBackground(view: View) {
+//        val requestOptions = RequestOptions()
+//        requestOptions.transform(BlurTransformation(50)) // 0-100
+//        Glide.with(applicationContext).setDefaultRequestOptions(requestOptions)
+//            .load(imageUrl).into(view)
+//
+
+        Blurry.with(this)
+            .radius(10)
+            .sampling(8)
+//            .color(Color.argb(66, 255, 255, 0))
+            .async()
+            .capture(view)
+//            .onto(canvas.parent as ViewGroup)
+
+//        Blurry.with(this)
+////            .capture(findViewById(R.id.custom_canvas_view))
+//            .radius(10)
+//            .sampling(8)
+//            .capture(canvas)
+//            .into(canvas.getBitmap())
+
+//        val bitmap = Blur.of(this,canvas.getBitmap(), BlurFactor())
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            canvas.background = BitmapDrawable(resources, bitmap)
+//            canvas.invalidate()
+//        }
+
+
+    }
+
+    fun getBitmap(): Bitmap {
+        return canvas.getBitmap()
+    }
+
+    private fun saveImageAndShare(share: Boolean): Boolean {
+        // get path to external storage (SD card)
+//       val imageData = Bitmap.createBitmap(canvas.getBitmap(),canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
+
+        val view = CustomCanvasView(this,canvas.attributeSet)
+//        view.draw()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            fabOverlay.draw(canvas.getCanvas())
+//            blurBackground(fabOverlay)
+        }
+
+        val imageData = Bitmap.createBitmap(canvas.getBitmap())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            fabOverlay.background = BitmapDrawable(resources, imageData)
+        }
+
+        if (share) shareOnInstagram(imageData)
+//        val filename = "Paint_drawing"
+//        val sdIconStorageDir = File(
+//            Environment.getExternalStorageDirectory()
+//                .absolutePath + "/Paint/"
+//        )
+//        // create storage directories, if they don't exist
+//        if (!sdIconStorageDir.exists()) {
+//            sdIconStorageDir.mkdirs()
+//        }
+//        try {
+//            val filePath = sdIconStorageDir.toString() + File.separator + filename
+//            val fileOutputStream = FileOutputStream(filePath)
+//            val bos = BufferedOutputStream(fileOutputStream)
+//
+//
+//            Toast.makeText(this, "Image Saved at----$filePath", Toast.LENGTH_LONG).show()
+//            // choose another format if PNG doesn't suit you
+//            imageData.compress(Bitmap.CompressFormat.JPEG, 100, bos)
+//            bos.flush()
+//            bos.close()
+//
+//        } catch (e: FileNotFoundException) {
+//            Log.w("TAG", "Error saving image file: " + e.message)
+//            return false;
+//        } catch (e: IOException) {
+//            Log.w("TAG", "Error saving image file: " + e.message)
+//            return false
+//        }
+        return true
     }
 
 

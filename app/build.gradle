@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
+apply plugin: 'kotlin-kapt'
+
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -38,6 +40,9 @@ dependencies {
     // blurred Background
     implementation 'jp.wasabeef:blurry:2.0.3'
 
+    implementation 'com.github.bumptech.glide:glide:4.4.0'
+    kapt 'com.github.bumptech.glide:compiler:4.4.0'
+
     // LiveData
 
     def archLifecycleVersion = '1.1.1'
@@ -49,4 +54,8 @@ dependencies {
 
     // color picker
     implementation 'com.github.QuadFlask:colorpicker:0.0.15'
+
+    // coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.1"
 }
