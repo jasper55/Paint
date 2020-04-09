@@ -25,7 +25,9 @@ import java.io.ByteArrayOutputStream
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var isEraseOn = MutableLiveData<Boolean>(false)
+    private var _isEraseOn = MutableLiveData<Boolean>(false)
+    val isEraseOn: LiveData<Boolean>
+        get() = _isEraseOn
 
     private val _pathList: MutableLiveData<LinkedHashMap<Path, MyPaint>> by lazy { MutableLiveData<LinkedHashMap<Path, MyPaint>>() }
     val pathList: LiveData<LinkedHashMap<Path, MyPaint>>
@@ -117,7 +119,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun setCurrentPaint() {
         _currentPaint.value = MyPaint(
-            isEraseOn = isEraseOn.value!!,
+            isEraseOn = _isEraseOn.value!!,
             backgroundColor = _backgroundColor.value!!,
             drawColor = _drawColor.value!!,
             alphaSet = _colorAlpha.value!!,
@@ -177,7 +179,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun toggleErase() {
-        val previousEraseSetting = isEraseOn.value!!
+        val previousEraseSetting = _isEraseOn.value!!
         _currentPaint.value!!.apply {
             _currentPaint.value!!.copy(
                 isEraseOn = !previousEraseSetting
@@ -185,7 +187,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             color = if (previousEraseSetting == false) _backgroundColor.value!!
             else _drawColor.value!!
         }
-        isEraseOn.value = !previousEraseSetting
+        _isEraseOn.value = !previousEraseSetting
     }
 
     fun setDrawColor(newColor: Int) {
@@ -217,7 +219,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         cleanPath()
     }
 
-    fun saveOnDevice(){
+    fun saveOnDevice() {
 //        val myDir2 = File("/sdcard/saved_images")
 //        myDir.mkdirs()
 //        val fname = "InstaImage.jpg"
@@ -238,7 +240,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 //        }
 
 
-
         val myDir = File(Environment.getExternalStorageState())
         val os = BufferedOutputStream(FileOutputStream(myDir))
         bitmap.compress(CompressFormat.JPEG, 100, os)
@@ -249,7 +250,12 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
         val bytes = ByteArrayOutputStream()
         inImage.compress(CompressFormat.JPEG, 100, bytes)
-        val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "picture_to_share", null)
+        val path = MediaStore.Images.Media.insertImage(
+            inContext.contentResolver,
+            inImage,
+            "picture_to_share",
+            null
+        )
         return Uri.parse(path)
     }
 

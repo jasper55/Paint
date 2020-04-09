@@ -2,13 +2,14 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#999999</color>
+    <color name="colorAccent">#7498FF</color>
 
     <color name="colorFabMenu">#7498FF</color>
     <color name="colorFabOne">#80D8FF</color>
     <color name="colorFabTwo">#B9F6CA</color>
     <color name="colorFabThree">#FFFF8D</color>
     <color name="colorFabFour">#FFB74D</color>
-    <color name="colorAccent">#7498FF</color>
+
 
 
     <color name="background">#FFFFFF</color>
@@ -20,6 +21,7 @@
     <color name="blackTransparent80">#8d000000</color>
     <color name="whiteTransparent98">#98FFFFFF</color>
     <color name="white">#FFFF</color>
+    <color name="black_alpha">#1d000000</color>
 
 
 </resources>

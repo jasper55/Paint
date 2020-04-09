@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/bottom_tools_bar"
+    android:layout_centerHorizontal="true">
+
+    <ImageView
+        android:id="@+id/navigation_erase"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="@dimen/fab_margin"
+        android:icon="@drawable/ic_erase_black"
+        android:tint="@color/grey"/>
+
+    <ImageView
+        android:id="@+id/navigation_colors"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="@dimen/fab_margin"
+        android:icon="@drawable/ic_color_lens_black"
+        android:tint="@color/darkGrey"/>
+
+    <ImageView
+        android:id="@+id/navigation_undo"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="@dimen/fab_margin"
+        android:icon="@drawable/ic_undo_black"
+        android:tint="@color/grey"/>
+
+    <ImageView
+        android:id="@+id/navigation_redo"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="@dimen/fab_margin"
+        android:icon="@drawable/ic_redo_black"
+        android:tint="@color/grey"/>
+
+
+    <wagner.jasper.paint.ui.CircleView
+        android:id="@+id/circle_view"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:visibility="visible"
+/>
+<!--    android:layout_marginStart="8dp"-->
+<!--    android:layout_marginEnd="8dp"-->
+<!--    android:layout_marginBottom="8dp"-->
+<!--    android:elevation="12dp"-->
+<!--    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--    app:layout_constraintEnd_toEndOf="parent"-->
+
+</LinearLayout>

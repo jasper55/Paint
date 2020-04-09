@@ -30,13 +30,14 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import wagner.jasper.paint.ui.CircleView
 import wagner.jasper.paint.util.BlurBuilder
@@ -63,6 +64,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var linearLayoutStroke: LinearLayout
     private lateinit var colorPicker: AlertDialog
     private lateinit var circleView: CircleView
+    private lateinit var undoIcon: ImageView
+    private lateinit var redoIcon: ImageView
+    private lateinit var eraseIcon: ImageView
+    private lateinit var colorPaletteIcon: ImageView
     private lateinit var strokeWidthSeekbar: SeekBar
     private lateinit var colorAlphaSeekbar: SeekBar
     private lateinit var applyButton: Button
@@ -74,9 +79,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // link to inflated view in xml -- neccessary for undo/redo
+        window.apply {
+//            navigationBarColor = Color.WHITE
+//            statusBarColor = Color.WHITE
+        }
+
         canvas = custom_canvas_view
         initCircleView()
         initBottomNavigation()
+        initBottomToolBar()
         instantiateFABMenu()
         initColorPicker()
         initStrokeSeekbars()
@@ -89,42 +100,72 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateView(name, context, attrs)
     }
 
-    private fun initBottomNavigation() {
-        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
-        val navigationItemSelectedListener =
-            BottomNavigationView.OnNavigationItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.navigation_erase -> {
-                        sharedViewModel.toggleErase()
-                        if (sharedViewModel.currentPaint.value!!.isEraseOn) {
-//                            tintMenuIcon(eraseItem, R.color.darkGrey)
-                        } else {
-//                            tintMenuIcon(eraseItem, R.color.grey)
-                        }
-                        return@OnNavigationItemSelectedListener true
-                    }
-                    R.id.navigation_brush -> {
-                        showDrawColorPicker()
-                        return@OnNavigationItemSelectedListener true
-                    }
-                    R.id.navigation_undo -> {
-                        sharedViewModel.undo()
-                        canvas.invalidate()
-                        return@OnNavigationItemSelectedListener true
-                    }
+    override fun onWindowFocusChanged(hasFocus: Boolean){
+        if(hasFocus) hideSystemUI()
+    }
 
-                    R.id.navigation_redo -> {
-                        sharedViewModel.redo()
-                        canvas.invalidate()
-                        return@OnNavigationItemSelectedListener true
-                    }
-                    R.id.navigation_circle -> {
-                        return@OnNavigationItemSelectedListener true
-                    }
-                }
-                false
-            }
-        bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
+    private fun initBottomToolBar() {
+        eraseIcon = findViewById<ImageView>(R.id.navigation_erase)
+        colorPaletteIcon = findViewById<ImageView>(R.id.navigation_colors)
+        undoIcon = findViewById(R.id.navigation_undo)
+        redoIcon = findViewById(R.id.navigation_redo)
+        circleView = findViewById(R.id.circle_view)
+
+        eraseIcon.setOnClickListener {
+            sharedViewModel.toggleErase()
+        }
+
+        colorPaletteIcon.setOnClickListener {
+            showDrawColorPicker()
+        }
+
+        undoIcon.setOnClickListener {
+            sharedViewModel.undo()
+            canvas.invalidate()
+        }
+
+        redoIcon.setOnClickListener {
+            sharedViewModel.redo()
+            canvas.invalidate()
+        }
+    }
+
+    private fun initBottomNavigation() {
+//        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
+//        val navigationItemSelectedListener =
+//            BottomNavigationView.OnNavigationItemSelectedListener { item ->
+//                when (item.itemId) {
+//                    R.id.navigation_erase -> {
+//                        sharedViewModel.toggleErase()
+//                        if (sharedViewModel.currentPaint.value!!.isEraseOn) {
+////                            tintMenuIcon(eraseItem, R.color.darkGrey)
+//                        } else {
+////                            tintMenuIcon(eraseItem, R.color.grey)
+//                        }
+//                        return@OnNavigationItemSelectedListener true
+//                    }
+//                    R.id.navigation_brush -> {
+//                        showDrawColorPicker()
+//                        return@OnNavigationItemSelectedListener true
+//                    }
+//                    R.id.navigation_undo -> {
+//                        sharedViewModel.undo()
+//                        canvas.invalidate()
+//                        return@OnNavigationItemSelectedListener true
+//                    }
+//
+//                    R.id.navigation_redo -> {
+//                        sharedViewModel.redo()
+//                        canvas.invalidate()
+//                        return@OnNavigationItemSelectedListener true
+//                    }
+//                    R.id.navigation_circle -> {
+//                        return@OnNavigationItemSelectedListener true
+//                    }
+//                }
+//                false
+//            }
+//        bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
     }
 
     private fun observePathChanges() {
@@ -145,6 +186,36 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.colorAlpha.observe(this, Observer {
             circleView.setAlpha(it)
             Log.i("SharedViewModel", "observeCircleView()")
+        })
+
+        sharedViewModel.pathList.observe(this, Observer {
+            Log.i("SharedViewModel", "pathList()")
+
+            if (it.values.isNullOrEmpty()) {
+                tintLight(undoIcon)
+            } else {
+                tintDark(undoIcon)
+            }
+        })
+        sharedViewModel.undoPathList.observe(this, Observer {
+            Log.i("SharedViewModel", "undoPathList")
+
+            if (it.values.isNotEmpty()) {
+                tintDark(redoIcon)
+            } else {
+                tintLight(redoIcon)
+            }
+        })
+        sharedViewModel.isEraseOn.observe(this, Observer {
+            Log.i("SharedViewModel", "isEraseOn")
+
+            if (it) {
+                    tintDark(eraseIcon)
+                    tintLight(colorPaletteIcon)
+                } else {
+                    tintLight(eraseIcon)
+                    tintDark(colorPaletteIcon)
+                }
         })
     }
 
@@ -246,8 +317,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCircleView() {
-        circleView = circle_view
-        circleView.invalidate()
+//        circleView = circle_view
+//        circleView.invalidate()
     }
 
     private fun showDrawColorPicker() {
@@ -350,6 +421,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun tintDark(icon: ImageView){
+        DrawableCompat.setTint(icon.drawable, ContextCompat.getColor(applicationContext, R.color.darkGrey))
+//        icon.setColorFilter(R.color.darkGrey)
+    }
+
+    private fun tintLight(icon: ImageView){
+        DrawableCompat.setTint(icon.drawable, ContextCompat.getColor(applicationContext, R.color.grey))
+//        icon.setColorFilter(R.color.grey)
+    }
+
     private fun showBlurredOverlay() {
         val oldCanvas = canvas.getCanvas()
         val view = CustomCanvasView(this, canvas.attributeSet)
@@ -401,6 +482,21 @@ class MainActivity : AppCompatActivity() {
 //            return false
 //        }
         return true
+    }
+
+    private fun hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
 
