@@ -78,15 +78,7 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
         setContentView(R.layout.activity_main)
 
-        // link to inflated view in xml -- neccessary for undo/redo
-        window.apply {
-//            navigationBarColor = Color.WHITE
-//            statusBarColor = Color.WHITE
-        }
-
         canvas = custom_canvas_view
-        initCircleView()
-        initBottomNavigation()
         initBottomToolBar()
         instantiateFABMenu()
         initColorPicker()
@@ -105,8 +97,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBottomToolBar() {
-        eraseIcon = findViewById<ImageView>(R.id.navigation_erase)
-        colorPaletteIcon = findViewById<ImageView>(R.id.navigation_colors)
+        eraseIcon = findViewById(R.id.navigation_erase)
+        colorPaletteIcon = findViewById(R.id.navigation_colors)
         undoIcon = findViewById(R.id.navigation_undo)
         redoIcon = findViewById(R.id.navigation_redo)
         circleView = findViewById(R.id.circle_view)
@@ -128,44 +120,6 @@ class MainActivity : AppCompatActivity() {
             sharedViewModel.redo()
             canvas.invalidate()
         }
-    }
-
-    private fun initBottomNavigation() {
-//        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
-//        val navigationItemSelectedListener =
-//            BottomNavigationView.OnNavigationItemSelectedListener { item ->
-//                when (item.itemId) {
-//                    R.id.navigation_erase -> {
-//                        sharedViewModel.toggleErase()
-//                        if (sharedViewModel.currentPaint.value!!.isEraseOn) {
-////                            tintMenuIcon(eraseItem, R.color.darkGrey)
-//                        } else {
-////                            tintMenuIcon(eraseItem, R.color.grey)
-//                        }
-//                        return@OnNavigationItemSelectedListener true
-//                    }
-//                    R.id.navigation_brush -> {
-//                        showDrawColorPicker()
-//                        return@OnNavigationItemSelectedListener true
-//                    }
-//                    R.id.navigation_undo -> {
-//                        sharedViewModel.undo()
-//                        canvas.invalidate()
-//                        return@OnNavigationItemSelectedListener true
-//                    }
-//
-//                    R.id.navigation_redo -> {
-//                        sharedViewModel.redo()
-//                        canvas.invalidate()
-//                        return@OnNavigationItemSelectedListener true
-//                    }
-//                    R.id.navigation_circle -> {
-//                        return@OnNavigationItemSelectedListener true
-//                    }
-//                }
-//                false
-//            }
-//        bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
     }
 
     private fun observePathChanges() {
@@ -316,11 +270,6 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    private fun initCircleView() {
-//        circleView = circle_view
-//        circleView.invalidate()
-    }
-
     private fun showDrawColorPicker() {
         canvas.visibility = View.GONE
         colorPicker.show()
@@ -347,7 +296,6 @@ class MainActivity : AppCompatActivity() {
                         allColors: Array<Int>
                     ) {
                         showColorAlphaSeekbar()
-//                        showCircleView()
                         showStrokeWidthSeekbar()
                         showApplyButton()
                     }
@@ -414,27 +362,17 @@ class MainActivity : AppCompatActivity() {
         canvas.visibility = View.VISIBLE
     }
 
-
-    private fun tintMenuIcon(item: MenuItem, color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            item.icon.setTint(resources.getColor(color))
-        }
-    }
-
     private fun tintDark(icon: ImageView){
         DrawableCompat.setTint(icon.drawable, ContextCompat.getColor(applicationContext, R.color.darkGrey))
-//        icon.setColorFilter(R.color.darkGrey)
     }
 
     private fun tintLight(icon: ImageView){
         DrawableCompat.setTint(icon.drawable, ContextCompat.getColor(applicationContext, R.color.grey))
-//        icon.setColorFilter(R.color.grey)
     }
 
     private fun showBlurredOverlay() {
         val oldCanvas = canvas.getCanvas()
         val view = CustomCanvasView(this, canvas.attributeSet)
-//        val view = CustomView(this,this, canvas.attributeSet)
         val imageData = Bitmap.createBitmap(canvas.getBitmap())
         val blurredBitmap = BlurBuilder.blur(this, imageData)
         val blurredDrawable = BitmapDrawable(blurredBitmap)
