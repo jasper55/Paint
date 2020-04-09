@@ -20,8 +20,6 @@ class CustomCanvasView @JvmOverloads constructor(
 
     val attributeSet = attrs
     private lateinit var extraCanvas: Canvas
-    private lateinit var latestCanvas: Canvas
-    private lateinit var emptyBitmap: Bitmap
     lateinit var extraBitmap: Bitmap
     // the drawing will be interpolated and not drawn for every pixel
     // the sensibility of the distance between two points is set here
@@ -81,10 +79,6 @@ class CustomCanvasView @JvmOverloads constructor(
         }
         invalidate()
         return true
-    }
-
-    fun getLastestBitmap(): Bitmap {
-        return emptyBitmap
     }
 
     fun getBitmap(): Bitmap {
