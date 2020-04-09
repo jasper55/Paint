@@ -53,8 +53,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     val drawColor: LiveData<Int>
         get() = _drawColor
 
-    private lateinit var file: File
-
     private var motionTouchEventX = 0F
     private var motionTouchEventY = 0F
 
@@ -213,10 +211,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun deleteSelectedPath(path: Path) {
 //        _pathList.value!!.remove(path)
-    }
-
-    fun cleanPath() {
-        cleanPath()
     }
 
     fun saveOnDevice() {

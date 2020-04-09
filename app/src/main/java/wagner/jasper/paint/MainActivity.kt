@@ -38,7 +38,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import wagner.jasper.paint.ui.CircleView
 import wagner.jasper.paint.util.BlurBuilder
 import wagner.jasper.paint.util.BounceInterpolator

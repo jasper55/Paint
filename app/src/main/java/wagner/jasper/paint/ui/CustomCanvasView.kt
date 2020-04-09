@@ -64,18 +64,12 @@ class CustomCanvasView @JvmOverloads constructor(
         sharedViewModel.updateXY(event.x, event.y)
 
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                sharedViewModel.touchStart()
-//                captureScreen()
-            }
-            MotionEvent.ACTION_MOVE -> if (sharedViewModel.isTouchEventWithinTolerance(
-                    touchTolerance
-                )
-            ) {
-                sharedViewModel.touchMove()
-            }
-            MotionEvent.ACTION_UP -> sharedViewModel.touchUp()
+            MotionEvent.ACTION_DOWN -> sharedViewModel.touchStart()
 
+            MotionEvent.ACTION_MOVE -> if (sharedViewModel.isTouchEventWithinTolerance(touchTolerance))
+            { sharedViewModel.touchMove() }
+
+            MotionEvent.ACTION_UP -> sharedViewModel.touchUp()
         }
         invalidate()
         return true
