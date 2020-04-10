@@ -58,4 +58,7 @@ dependencies {
     // coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.1"
+
+    // swipe layout
+    implementation 'com.github.colorgreen:swipe-touch-listener:v1.3'
 }

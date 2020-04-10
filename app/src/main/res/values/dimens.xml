@@ -2,6 +2,7 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
 
+
     <dimen name="fab_margin_right">4dp</dimen>
     <dimen name="fab_margin_bottom">60dp</dimen>
 
@@ -18,4 +19,6 @@
 
     <dimen name="padding_label_5">5dp</dimen>
     <dimen name="padding_label_2">2dp</dimen>
+
+    <dimen name="padding_bottom_icon">12dp</dimen>
 </resources>

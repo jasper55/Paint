@@ -127,7 +127,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun undo() {
         removeAdd(
-            listToRemove = pathList.value!!,
+            listToRemove = _pathList.value!!,
             listToAdd = _undoPathList.value!!
         )
     }
@@ -135,7 +135,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     fun redo() {
         removeAdd(
             listToRemove = _undoPathList.value!!,
-            listToAdd = pathList.value!!
+            listToAdd = _pathList.value!!
         )
     }
 

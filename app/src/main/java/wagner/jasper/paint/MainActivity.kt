@@ -29,15 +29,16 @@ import com.flask.colorpicker.builder.ColorPickerClickListener
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import android.widget.SeekBar
 import android.os.Build
-import android.view.MenuItem
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
+import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import wagner.jasper.paint.ui.CircleView
 import wagner.jasper.paint.util.BlurBuilder
 import wagner.jasper.paint.util.BounceInterpolator
@@ -72,6 +73,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var applyButton: Button
     private lateinit var sharedViewModel: SharedViewModel
 
+    private lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottom_slider: LinearLayout
+    private lateinit var bottom_tools_bar: LinearLayout
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
@@ -91,11 +97,61 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateView(name, context, attrs)
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean){
-        if(hasFocus) hideSystemUI()
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (hasFocus) hideSystemUI()
     }
 
     private fun initBottomToolBar() {
+
+        bottom_slider = findViewById(R.id.bottom_slider)
+        bottom_tools_bar = findViewById(R.id.bottom_tools_bar)
+        bottom_tools_bar.visibility = View.GONE
+        sheetBehavior = BottomSheetBehavior.from(bottom_slider)
+
+        // click event for show-dismiss bottom sheet
+        expandable_icon.setOnClickListener {
+
+            if (sheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
+            } else {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
+            }
+        }
+
+// callback for do something
+        sheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        bottom_tools_bar.visibility = View.VISIBLE
+                        collapsable_icon_down.visibility = View.VISIBLE
+                        expandable_icon.visibility = View.GONE
+
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        bottom_tools_bar.visibility = View.GONE
+                        collapsable_icon_down.visibility = View.GONE
+                        expandable_icon.visibility = View.VISIBLE
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+
+
+        })
+
+
         eraseIcon = findViewById(R.id.navigation_erase)
         colorPaletteIcon = findViewById(R.id.navigation_colors)
         undoIcon = findViewById(R.id.navigation_undo)
@@ -124,6 +180,16 @@ class MainActivity : AppCompatActivity() {
     private fun observePathChanges() {
         sharedViewModel.path.observe(this, Observer {
             Log.i("SharedViewModel", "observePathChanges()")
+            tintLight(undoIcon)
+            tintLight(redoIcon)
+            sharedViewModel.apply {
+                if (path.value!!.keys.isNotEmpty()) {
+                    tintDark(undoIcon)
+                }
+                if (undoPathList.value!!.keys.isNotEmpty()) {
+                    tintDark(redoIcon)
+                }
+            }
         })
         sharedViewModel.drawColor.observe(this, Observer {
             circleView.setColor(it)
@@ -141,34 +207,16 @@ class MainActivity : AppCompatActivity() {
             Log.i("SharedViewModel", "observeCircleView()")
         })
 
-        sharedViewModel.pathList.observe(this, Observer {
-            Log.i("SharedViewModel", "pathList()")
-
-            if (it.values.isNullOrEmpty()) {
-                tintLight(undoIcon)
-            } else {
-                tintDark(undoIcon)
-            }
-        })
-        sharedViewModel.undoPathList.observe(this, Observer {
-            Log.i("SharedViewModel", "undoPathList")
-
-            if (it.values.isNotEmpty()) {
-                tintDark(redoIcon)
-            } else {
-                tintLight(redoIcon)
-            }
-        })
         sharedViewModel.isEraseOn.observe(this, Observer {
             Log.i("SharedViewModel", "isEraseOn")
 
             if (it) {
-                    tintDark(eraseIcon)
-                    tintLight(colorPaletteIcon)
-                } else {
-                    tintLight(eraseIcon)
-                    tintDark(colorPaletteIcon)
-                }
+                tintDark(eraseIcon)
+                tintLight(colorPaletteIcon)
+            } else {
+                tintLight(eraseIcon)
+                tintDark(colorPaletteIcon)
+            }
         })
     }
 
@@ -361,12 +409,18 @@ class MainActivity : AppCompatActivity() {
         canvas.visibility = View.VISIBLE
     }
 
-    private fun tintDark(icon: ImageView){
-        DrawableCompat.setTint(icon.drawable, ContextCompat.getColor(applicationContext, R.color.darkGrey))
+    private fun tintDark(icon: ImageView) {
+        DrawableCompat.setTint(
+            icon.drawable,
+            ContextCompat.getColor(applicationContext, R.color.darkGrey)
+        )
     }
 
-    private fun tintLight(icon: ImageView){
-        DrawableCompat.setTint(icon.drawable, ContextCompat.getColor(applicationContext, R.color.grey))
+    private fun tintLight(icon: ImageView) {
+        DrawableCompat.setTint(
+            icon.drawable,
+            ContextCompat.getColor(applicationContext, R.color.grey)
+        )
     }
 
     private fun showBlurredOverlay() {
