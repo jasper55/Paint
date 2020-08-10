@@ -118,17 +118,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-// callback for do something
         sheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                    }
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         bottom_tools_bar.visibility = View.VISIBLE
                         collapsable_icon_down.visibility = View.VISIBLE
                         expandable_icon.visibility = View.GONE
-
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -136,19 +132,9 @@ class MainActivity : AppCompatActivity() {
                         collapsable_icon_down.visibility = View.GONE
                         expandable_icon.visibility = View.VISIBLE
                     }
-                    BottomSheetBehavior.STATE_DRAGGING -> {
-                    }
-                    BottomSheetBehavior.STATE_SETTLING -> {
-
-                    }
                 }
             }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
-
-
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
 
