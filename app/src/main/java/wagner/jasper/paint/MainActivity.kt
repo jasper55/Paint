@@ -346,7 +346,7 @@ class MainActivity : AppCompatActivity() {
         linearLayoutAlpha = findViewById(R.id.color_alpha_seek_bar_container)
         linearLayoutStroke = findViewById(R.id.stroke_width_seek_bar_container)
         colorAlphaSeekbar = findViewById(R.id.color_alpha_seek_bar)
-        colorAlphaSeekbar.progress = 100
+        colorAlphaSeekbar.progress = 255
         strokeWidthSeekbar = findViewById(R.id.stroke_width_seek_bar)
 
         colorAlphaSeekbar.progressDrawable.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
@@ -371,6 +371,7 @@ class MainActivity : AppCompatActivity() {
         colorAlphaSeekbar.visibility = View.VISIBLE
         colorAlphaSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, width: Int, b: Boolean) {
+                Log.d("ALPHA", "$width")
                 sharedViewModel.setAlpha(width)
             }
 
@@ -476,6 +477,4 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-
 }
-

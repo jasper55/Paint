@@ -77,7 +77,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             ColorUtils.setAlphaComponent(application.resources.getColor(R.color.background), 255)
         _drawColor.value =
             ColorUtils.setAlphaComponent(application.resources.getColor(R.color.drawColor), 255)
-        _colorAlpha.value = 255
         setCurrentPaint()
         _path.value = LinkedHashMap()
         _currentPath.value = Path()
@@ -111,6 +110,9 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     fun touchUp() {
         _pathList.value!!.set(_currentPath.value!!, _currentPaint.value!!)
         _path.value?.set(_currentPath.value!!, _currentPaint.value!!)
+        Log.i("ALPHA", "${_currentPaint.value!!.alpha}")
+        Log.i("ALPHA", "${_currentPaint.value!!.alphaSet}")
+
         _currentPath.value = Path()
         Log.i("SharedViewModel", "touchUp()")
     }
@@ -201,7 +203,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun setAlpha(newAlpha: Int) {
-        val alpha = (newAlpha * 255) / 100
         _colorAlpha.value = newAlpha
     }
 

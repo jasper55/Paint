@@ -20,8 +20,8 @@ data class MyPaint(
         strokeCap = Cap.ROUND  //default: BUTT
 
         // adjustable settings
-        alpha = alphaSet
         color = if (isEraseOn) backgroundColor else drawColor
         strokeWidth = strokeWidthSet
+        alpha = alphaSet
     }
 }
