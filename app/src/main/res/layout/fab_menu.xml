@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/custom_fab_menu"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:elevation="100dp">
 
     <ImageView
         android:id="@+id/fabOverlay"
@@ -44,8 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            app:borderWidth="2dp"
             app:backgroundTint="@color/colorFabThree"
-            app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_share_black" />
     </LinearLayout>
@@ -79,8 +80,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            app:borderWidth="2dp"
             app:backgroundTint="@color/colorFabTwo"
-            app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_save_black" />
     </LinearLayout>
@@ -115,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             app:backgroundTint="@color/colorFabOne"
-            app:borderWidth="0dp"
+            app:borderWidth="2dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_clear_black" />
     </LinearLayout>
@@ -139,9 +140,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:gravity="center_vertical"
-            app:elevation="100dp"
+            app:elevation="3dp"
             app:backgroundTint="@color/grey"
-            app:borderWidth="0dp"
+            app:borderWidth="5dp"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_menu2_black" />
     </LinearLayout>
