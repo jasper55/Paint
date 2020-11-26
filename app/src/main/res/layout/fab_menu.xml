@@ -142,10 +142,11 @@
             android:layout_gravity="bottom|end"
             android:gravity="center_vertical"
             app:elevation="3dp"
-            app:backgroundTint="@color/grey"
-            app:borderWidth="5dp"
+            app:backgroundTint="@color/black"
+            app:borderWidth="4dp"
             app:fabSize="normal"
-            app:srcCompat="@drawable/ic_menu2_black" />
+            app:srcCompat="@drawable/ic_menu2_black"
+            app:tint="@color/white"/>
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

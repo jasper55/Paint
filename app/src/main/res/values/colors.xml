@@ -15,12 +15,14 @@
     <color name="background">#FFFFFF</color>
     <color name="drawColor">#000000</color>
 
+
     <color name="grey">#999999</color>
     <color name="darkGrey">#3D3D3D</color>
 
     <color name="blackTransparent80">#8d000000</color>
     <color name="whiteTransparent98">#98FFFFFF</color>
     <color name="white">#FFFF</color>
+    <color name="black">#000000</color>
     <color name="black_alpha">#1d000000</color>
 
 

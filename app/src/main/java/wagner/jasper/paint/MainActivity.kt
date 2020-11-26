@@ -37,7 +37,9 @@ import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.alpha
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.marginBottom
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import wagner.jasper.paint.ui.CircleView
 import wagner.jasper.paint.util.BlurBuilder
@@ -134,6 +136,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
@@ -263,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear.visibility = CoordinatorLayout.VISIBLE
         fab_container_save.visibility = CoordinatorLayout.VISIBLE
         fab_container_share.visibility = CoordinatorLayout.VISIBLE
-        fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.white))
+//        fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.white))
         fab_menu.animate().rotationBy(270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
@@ -286,7 +289,7 @@ class MainActivity : AppCompatActivity() {
         fab_container_clear.animate().translationY(0F)
         fab_container_save.animate().translationY(0F)
         fab_container_share.animate().translationY(0F)
-        fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.grey))
+//        fab_menu.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.black))
         fab_menu.animate().rotationBy(-270F)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animator: Animator) {}
@@ -309,17 +312,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initColorPicker() {
+        var initialColor: Int = -1
+        sharedViewModel.currentPaint.value?.drawColor?.let {
+            if (it != -16777216) {
+                initialColor = it
+            }
+        }
         colorPicker =
             ColorPickerDialogBuilder
                 .with(this)
                 .setTitle("Choose a color")
-                .initialColor(sharedViewModel.currentPaint.value?.drawColor ?: Color.BLUE)
+                .initialColor(initialColor)
                 .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
                 .showAlphaSlider(false)
-                .density(12)
+                .density(15)
                 .setOnColorSelectedListener(object : OnColorSelectedListener {
                     override fun onColorSelected(selectedColor: Int) {
                         sharedViewModel.setDrawColor(selectedColor)
+                        colorAlphaSeekbar.thumb.setColorFilter(sharedViewModel.currentPaint.value!!.drawColor, PorterDuff.Mode.SRC_IN)
                     }
                 })
                 .setPositiveButton("ok", object : ColorPickerClickListener {
@@ -349,8 +359,8 @@ class MainActivity : AppCompatActivity() {
         colorAlphaSeekbar.progress = 255
         strokeWidthSeekbar = findViewById(R.id.stroke_width_seek_bar)
 
-        colorAlphaSeekbar.progressDrawable.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
-        colorAlphaSeekbar.thumb.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
+        colorAlphaSeekbar.progressDrawable.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN)
+        colorAlphaSeekbar.thumb.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN)
     }
 
     private fun showStrokeWidthSeekbar() {
@@ -375,7 +385,8 @@ class MainActivity : AppCompatActivity() {
                 sharedViewModel.setAlpha(width)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
