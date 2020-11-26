@@ -412,13 +412,13 @@ class MainActivity : AppCompatActivity() {
     private fun showBlurredOverlay() {
         val oldCanvas = canvas.getCanvas()
         val view = CustomCanvasView(this, canvas.attributeSet)
+        view.draw(oldCanvas)
         val imageData = Bitmap.createBitmap(canvas.getBitmap())
         val blurredBitmap = BlurBuilder.blur(this, imageData)
         val blurredDrawable = BitmapDrawable(blurredBitmap)
         blurredImageOverlay.setImageDrawable(blurredDrawable)
         blurredImageOverlay.invalidate()
         blurredImageOverlay.visibility = ImageView.VISIBLE
-        view.draw(oldCanvas)
     }
 
     private fun shareImage(): Boolean {
